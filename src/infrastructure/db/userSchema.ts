@@ -1,36 +1,35 @@
-import mongoose,{Schema,model} from "mongoose"; 
+import mongoose, { Schema } from "mongoose";
 import IUser from "../../entity/userEntity";
 
-const userSchema:Schema = new Schema({
-  name : {
-    type : String,
-    required:true
-  },
-
-  email : {
+const userSchema = new Schema<IUser>({
+  name: {
     type: String,
     required: true
   },
-
-  password : {
-    type : String,
-    required : true
-  },
-
-  isBlocked :{
-    type : Boolean,
-    default : false,
+  email: {
+    type: String,
     required: true
   },
-
-  otpVerified :{
-    type :Boolean,
-    default:false,
-    required:true
+  password: {
+    type: String,
+    required: true
+  },
+  isBlocked: {
+    type: Boolean,
+    default: false,
+    required: true
+  },
+  otpVerified: {
+    type: Boolean,
+    default: false,
+    required: true
+  },
+  image: {
+    type: String,
+    required: false
   }
+});
 
-})
+const UserModel = mongoose.model<IUser>('User', userSchema); 
 
-const Users  = mongoose.model<IUser>('Users',userSchema)
-
-export default Users
+export default UserModel;

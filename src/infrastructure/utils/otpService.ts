@@ -12,7 +12,7 @@ export default class OtpService implements IotpService{
   }
 
   // sendEmail
-  async sendEmail(email: string, otp: number, userName: string) {
+  async sendEmail(email: string, otp: string, name: string) {
 
     const transporter = nodemailer.createTransport({
       service: "gmail",
@@ -28,27 +28,27 @@ export default class OtpService implements IotpService{
     const mailGenerator = new Mailgen({
       theme: "default",
       product: {
-        name: "Real Estate",
+        name: "Dream Buy",
         link: "https://mailgen.js/",
         // logo : "link"  optional
       },
     });
 
     const resp = {
-      body:{
-      name: 'Dream Buy',
-      intro: 'Welcome to Dream Buy! We\'re very excited to have you on board.',
-      action: {
-        instructions: `To complete your registration, please use the following One Time Password (OTP):`,
-        button: {
-          color: '#22BC66',
-          text: `Your OTP is ${otp}`,
-          link: 'https://your-company.com/verify', // link to the verification page
+      body: {
+        name: `${name}`,
+        intro: 'Welcome to Dream Buy! We\'re very excited to have you on board.',
+        action: {
+          instructions: `To complete your registration, please use the following One Time Password (OTP):`,
+          button: {
+            color: '#22BC66',
+            text: `Your OTP is ${otp}`,
+            link: 'http://localhost:5173/verifyOtp',
+          },
         },
-      },
-      outro: 'If you did not request this email, please ignore it.',
-    }
-  }
+        outro: 'If you did not request this email, please ignore it.',
+      }
+    };
 
     const html = mailGenerator.generate(resp) 
    // const text = mailGenerator.generate(resp)  Generate the plaintext version of the e-mail 
@@ -57,7 +57,7 @@ export default class OtpService implements IotpService{
       from:process.env.EMAIL,
       to:email,
       subject:"DreamBuy OTP verification",
-      email:html
+      html:html
     }
 
     await transporter.sendMail(message)

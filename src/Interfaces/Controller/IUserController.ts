@@ -6,10 +6,12 @@ export interface IregisterBody  {
   name:string
   email:string
   password : string
-  confirmPassword : string
 }
+
 
 
 export interface IUserController {
   register(req:Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>, res: Response<any, Record<string, any>>):void
+  verifyOtp( req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>,res: Response<any, Record<string, any>>):Promise<void>
+  resendOtp(req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>,res: Response<any, Record<string, any>>):Promise<void>
 }

@@ -14,7 +14,10 @@ dotenv.config()
 app.use(morgan('dev'))
 
 // Setting Cors
-app.use(cors())
+app.use(cors({
+  origin:"http://localhost:5000",
+  credentials:true
+}))
 
 // Cookie Parser
 app.use(cookieParser())
