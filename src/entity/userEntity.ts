@@ -18,7 +18,8 @@ export interface ISeller extends Document {
   isBlocked:boolean
   otpVerified:boolean
   image?:string
-  verficationImage:string
+  verficationImage:string,
+  kycVerified:string
 }
 
 export interface IOtp extends Document {

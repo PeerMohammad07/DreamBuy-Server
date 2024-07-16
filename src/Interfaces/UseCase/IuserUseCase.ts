@@ -30,7 +30,7 @@ export interface googleLoginData{
 }
 
 export default interface IuserUseCase{
-  register(data:IregisterBody):void
+  register(data:IregisterBody):Promise<void|loginRes>
   verifyOtp(email:string,otp:string):Promise<Itoken>
   verifyToken(token:string):TokenResponse
   loginAuthentication(data:loginBody):Promise<loginRes|null>

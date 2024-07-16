@@ -1,7 +1,7 @@
 import mongoose, { Schema } from "mongoose";
 import { ISeller } from "../../entity/userEntity";
 
-const sellerSchema = new Schema({
+const seller = new Schema({
   name : {
     type:String,
     required:true
@@ -29,9 +29,14 @@ const sellerSchema = new Schema({
     type:Boolean,
     default : false,
     required: true
+  },
+  kycVerified :{
+    type:String,
+    enum : ["approved","rejected","inProgress"],
+    default:"inProgress"
   }
 })
 
-const Seller = mongoose.model<ISeller>("sellerSchema",sellerSchema)
+const Seller = mongoose.model<ISeller>("seller",seller)
 
 export default Seller

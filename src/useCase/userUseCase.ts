@@ -26,11 +26,13 @@ export default class userUseCase implements IuserUseCase {
   // register
   async register(data: IregisterBody) {
     try {
-      let exist = await this.userRepository.checkEmailExists(data.email);
-      if (exist) {
-        throw new Error("Email is already used");
+      let exist = await this.userRepository.checkEmailExists(data.email);      
+      if (exist) {        
+        return {
+          status:false,
+          message:"this user already exist"
+        }
       }
-
       let bycrptedPassword = await this.hashingService.hashing(data.password);
       data.password = bycrptedPassword;
 
@@ -40,7 +42,7 @@ export default class userUseCase implements IuserUseCase {
       this.userRepository.saveOtp(data.email, otp);
       this.otpService.sendEmail(data.email, otp, data.name);
     } catch (error) {
-      throw Error();
+      throw new Error();
     }
   }
 
@@ -67,6 +69,7 @@ export default class userUseCase implements IuserUseCase {
     }
   }
 
+  // verifyToken
   verifyToken(token: string) {
     try {
       let verifiedResponse = this.jwtService.verfiyToken(token);
@@ -84,6 +87,7 @@ export default class userUseCase implements IuserUseCase {
     }
   }
 
+  // login 
   async loginAuthentication(data: loginBody) {
     try {      
       const value = await this.userRepository.checkEmailExists(data.email);      
@@ -94,10 +98,12 @@ export default class userUseCase implements IuserUseCase {
             message: "this account for login only googleAuth",
           };
         }
-        const status = this.hashingService.compare(
-          value.password,
-          data.password
+        
+        const status = await this.hashingService.compare(
+          data.password,
+          value.password
         );
+        
         if (!status) {
           return {
             status: false,
@@ -130,6 +136,7 @@ export default class userUseCase implements IuserUseCase {
     }
   }
 
+  // resend Otp
   async resendOtp(email:string){
     try {
       const user = await this.userRepository.checkEmailExists(email)
@@ -146,6 +153,7 @@ export default class userUseCase implements IuserUseCase {
     }
   }
 
+  // googleLogin
   async googleLogin(data:googleLoginData){
     let user =await this.userRepository.checkEmailExists(data.email)
     if(!user){

@@ -18,32 +18,39 @@ export default class userController implements IUserController {
     this.googleLogin = this.googleLogin.bind(this)
   }
 
-  async register(req:Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>, res: Response<any, Record<string, any>>):Promise<void>{
-    try {
-      const {name,email,password} = req.body
-      if(!name||!email||!password){
-          res.status(400).json({
+    async register(req:Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>, res: Response<any, Record<string, any>>):Promise<void>{
+      try {
+        const {name,email,password} = req.body
+        if(!name||!email||!password){
+            res.status(400).json({
+              status:false,
+              message:"All fields are required"
+          })
+        }
+    
+        const data = {
+          name,
+          email,
+          password
+        }
+    
+        const response =  await this.userUseCase.register(data)
+        if(!response?.status && response?.message == 'this user already exist' ){
+           res.status(403).json({
             status:false,
-            message:"All fields are required"
+            message:"user already exist with this email"
+          })
+          return
+        }
+        res.cookie("otpEmail", email, { maxAge: 3600000 })
+        res.status(200).json({
+          status:true,
+          message:"User created and otp sended successfully"
         })
+      } catch (error) {
+        res.json(error)
       }
-  
-      const data = {
-        name,
-        email,
-        password
-      }
-  
-      await this.userUseCase.register(data)
-      res.cookie("otpEmail", email, { maxAge: 3600000 })
-      res.status(200).json({
-        status:true,
-        message:"User created and otp sended successfully"
-      })
-    } catch (error) {
-      res.json(error)
     }
-  }
 
   async verifyOtp( req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>,res: Response<any, Record<string, any>>){
     try {      
@@ -92,6 +99,7 @@ export default class userController implements IUserController {
         email,
         password
       }
+            
       const response = await this.userUseCase.loginAuthentication(data)
       if(!response?.status&&response?.message=="otp is not verified"){        
         res.cookie("otpEmail", email, { maxAge: 3600000 })
