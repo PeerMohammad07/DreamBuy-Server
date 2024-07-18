@@ -1,5 +1,5 @@
 import { Model } from "mongoose"
-import IUser, { IOtp } from "../../entity/userEntity"
+import IUser, { IOtp, IToken } from "../../entity/userEntity"
 import IuserRepository, { IotpData } from "../../Interfaces/Repository/userRepository"
 import { IregisterBody } from "../../Interfaces/Controller/IUserController"
 import { googleLoginData } from "../../Interfaces/UseCase/IuserUseCase"
@@ -16,6 +16,14 @@ export default class userRepository implements IuserRepository{
   async checkEmailExists(email:string){
     try {
        return await this.user.findOne({email})
+    } catch (error) {
+       throw new Error("Failed to check the email exists")
+    }
+  }
+
+  async checkUserExists(id:string){
+    try {
+       return await this.user.findOne({_id:id})
     } catch (error) {
        throw new Error("Failed to check the email exists")
     }
@@ -67,6 +75,14 @@ export default class userRepository implements IuserRepository{
         await user.save()
     } catch (error) {
       console.log(error);
+    }
+  }
+  
+  async updateUserPassword(id:string,password:string){
+    try {
+       return await this.user.findOneAndUpdate({_id:id},{$set:{password:password}}) 
+    } catch (error) {
+        throw new Error("Failed to update user verified ")
     }
   }
 }

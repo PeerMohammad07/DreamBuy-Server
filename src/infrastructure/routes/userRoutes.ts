@@ -34,6 +34,7 @@ userRouter.post('/logout',UserController.logout)
 userRouter.post("/getToken",UserController.getToken)
 userRouter.post("/resendOtp",UserController.resendOtp)
 userRouter.post("/googleLogin",UserController.googleLogin)
-
+userRouter.post("/forgotPassword",UserController.forgotPassword)
+userRouter.post("/resetPassword",UserController.resetPassword)
 
 export default userRouter

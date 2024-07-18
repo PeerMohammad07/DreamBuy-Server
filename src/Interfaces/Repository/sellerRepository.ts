@@ -5,8 +5,10 @@ import { IOtp } from "../../entity/userEntity";
 
 export default interface ISellerRepository {
   checkEmailExists(email:string):Promise<ISeller|null>
+  checkUserExists(id:string):Promise<ISeller|null>
   createSeller(data:IregisterData):Promise<void>
   saveOtp(email:string,otp:string):Promise<void>
   verifyOtp(email : string):Promise<IOtp|null>
   updateSellerVerified(email:string):Promise<ISeller|null>
+  updateSellerPassword(id:string,password:string):Promise<ISeller|null>
 }

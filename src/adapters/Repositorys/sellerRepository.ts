@@ -13,8 +13,17 @@ export default class SellerRepository implements ISellerRepository{
   }
 
   async checkEmailExists(email:string){
-    try {
+    try {      
       return await this.seller.findOne({email})
+    } catch (error) {
+      console.log(error); 
+      return null
+    }
+  }
+
+  async checkUserExists(id:string){
+    try {      
+      return await this.seller.findOne({_id:id})
     } catch (error) {
       console.log(error); 
       return null
@@ -61,6 +70,14 @@ export default class SellerRepository implements ISellerRepository{
       return await this.seller.findOneAndUpdate({email},{$set:{otpVerified:true}})
     } catch (error) {
       throw new Error("failed to update the seller")
+    }
+  }
+
+  async updateSellerPassword(id:string,password:string){
+    try {
+       return await this.seller.findOneAndUpdate({_id:id},{$set:{password:password}}) 
+    } catch (error) {
+        throw new Error("Failed to update user verified ")
     }
   }
 }

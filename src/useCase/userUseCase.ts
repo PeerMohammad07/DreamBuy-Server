@@ -11,6 +11,7 @@ export default class userUseCase implements IuserUseCase {
   private otpService: IotpService;
   private jwtService: IjwtService;
 
+
   constructor(
     userRepository: IuserRepository,
     HashingService: IhashingService,
@@ -170,4 +171,51 @@ export default class userUseCase implements IuserUseCase {
     const token = await this.jwtService.generateToken(payload)
     return {status:true,message:"google Login succesfull",token}
   }
+
+  // forgot password
+  async validateForgotPassword(email:string){
+    try {
+      const user = await this.userRepository.checkEmailExists(email)
+      console.log(email);
+      
+      if(!user){
+        return "user not exist with this email"
+      }
+      let data = {
+        userId : user?._id as string,
+        name : user?.name as string,
+        role:"user"
+      }
+      const expiresIn = "3m"
+      const token = await this.jwtService.generateTokenForgot(data,expiresIn)
+      const resetLink = `http://localhost:5000/resetPassword/${token}`
+      await this.otpService.sendEmailForgotPassword(resetLink,user.email)
+      return "Email sended to the user"
+    } catch (error) {
+      console.log(error);
+      return null
+    }
+  }
+
+  async resetPassword(password:string,id:string,token:string){
+    try {
+      const user = await this.userRepository.checkUserExists(id)
+      if(!user){
+        return "user doesn't exists"
+      }
+      let verifyToken = await this.jwtService.verfiyToken(token)
+      if(!verifyToken){
+        return "token expired"
+      }
+
+      let hashPassword = await this.hashingService.hashing(password)
+      const passwordUpdated = await this.userRepository.updateUserPassword(id,hashPassword)
+      if(passwordUpdated){
+        return "password updated succesfully"
+      }
+    } catch (error) {
+      
+    }
+  }
+
 }

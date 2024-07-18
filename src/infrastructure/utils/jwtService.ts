@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken"
-import jwtService,{DecodedJwt, tokenData} from "../../Interfaces/Utils/jwtServices"
+import jwtService,{DecodedJwt, tokenData, tokenForgotData} from "../../Interfaces/Utils/jwtServices"
 
 export default class JwtToken implements jwtService{
 
@@ -13,6 +13,16 @@ export default class JwtToken implements jwtService{
       throw new Error("Secret Key is Not Available")
     }
 
+    // tokenForEmail
+    generateTokenForgot(data:tokenData,expireTime:string){
+      let secretKey = process.env.JWT_SECRET_KEY
+      if(secretKey){
+        let token = jwt.sign(data,secretKey,{expiresIn:expireTime})
+        return token
+      }
+      throw new Error("Secret Key is Not Available")
+    } 
+    
 
     // verifying JWT Token
     verfiyToken(token:string):DecodedJwt|null{

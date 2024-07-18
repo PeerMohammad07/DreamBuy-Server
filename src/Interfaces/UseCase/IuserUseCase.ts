@@ -36,4 +36,6 @@ export default interface IuserUseCase{
   loginAuthentication(data:loginBody):Promise<loginRes|null>
   resendOtp(email:string):Promise<string|null>
   googleLogin(data:googleLoginData):Promise<loginRes|null>
+  validateForgotPassword(email:string):Promise<string|null>
+  resetPassword(password:string,id:string,token:string):Promise<string|void>
 }

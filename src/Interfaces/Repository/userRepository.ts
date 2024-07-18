@@ -1,6 +1,7 @@
+import mongoose from "mongoose";
 import IUser from "../../entity/userEntity";
 import { IregisterBody } from "../Controller/IUserController";
-import { googleLoginData } from "../UseCase/IuserUseCase";
+import { googleLoginData, Itoken } from "../UseCase/IuserUseCase";
 
 export interface IotpData {
   _id : string
@@ -10,12 +11,13 @@ export interface IotpData {
 }
 
 
-
 export default interface IuserRepository{
   checkEmailExists(email:string):Promise<IUser|null>
+  checkUserExists(id:string):Promise<IUser|null>
   createUser(data:IregisterBody):Promise<IUser|null>
   saveOtp(email:string,otp:string):void
   verifyOtp(email:string):Promise<IotpData|null>
   updateUserVerified(email:string):Promise<IUser|null>
   saveGoogleLogin(data:googleLoginData):void
+  updateUserPassword(id:string,password:string):Promise<IUser|null>
 }

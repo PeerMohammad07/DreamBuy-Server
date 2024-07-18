@@ -25,5 +25,7 @@ sellerRouter.post("/verifyOtp",sellerController.verifyOtp)
 sellerRouter.post("/login",sellerController.login)
 sellerRouter.post("/logout",sellerController.logout)
 sellerRouter.post("/resendOtp",sellerController.resendOtp)
+sellerRouter.post("/forgotPassword",sellerController.forgotPassword)
+sellerRouter.post("/resetPassword",sellerController.resetPassword)
 
 export default sellerRouter

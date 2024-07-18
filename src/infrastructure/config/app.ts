@@ -5,6 +5,7 @@ import userRouter from '../routes/userRoutes'
 import cors from "cors"
 import cookieParser from 'cookie-parser'
 import sellerRouter from '../routes/sellerRoutes'
+import adminRouter from '../routes/adminRoutes'
 
 const app = express()
 
@@ -30,7 +31,7 @@ app.use(express.urlencoded({extended:true,limit: '10mb'}))
 // Routes
 app.use('/api',userRouter)
 app.use('/api/seller',sellerRouter)
-// app.use('/api/admin',)
+app.use('/api/admin',adminRouter)
 
 
 export default app

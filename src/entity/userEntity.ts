@@ -28,3 +28,18 @@ export interface IOtp extends Document {
   email: string;
   createdAt: Date;
 }
+
+
+export interface IAdmin extends Document {
+  _id : string
+  name : string
+  email : string
+  password : string
+}
+
+export interface IToken extends Document {
+  _id : string
+  token : string
+  userId : string
+  email : string
+}

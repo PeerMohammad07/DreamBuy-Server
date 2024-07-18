@@ -102,21 +102,6 @@ export default class SellerUseCase implements ISellerUsecase {
           return {status:false, message : "otp is not verified"}
         }
 
-        if(!seller.verficationImage){
-          return {
-            status: false,
-            message: "no verification image",
-          };
-        }
-
-        if (seller.kycVerified == "inProgress"||seller.kycVerified == "rejected") {
-          return {
-            status: false,
-            message: "Kyc verification in progresss",
-          };
-        }
-
-
         let payload = {
           userId: seller._id,
           name: seller.name,
@@ -150,6 +135,52 @@ export default class SellerUseCase implements ISellerUsecase {
     } catch (error) {
       console.log(error);
       return null
+    }
+  }
+
+
+  // forgot password
+  async validateForgotPassword(email:string){
+    try {
+      const seller = await this.sellerRepository.checkEmailExists(email)
+      console.log(seller,"seller");
+      if(!seller){
+        return "seller not exist with this email"
+      }
+      let data = {
+        userId : seller?._id as string,
+        name : seller?.name as string,
+        role:"seller"
+      }
+      const expiresIn = "3m"
+      const token = await this.jwtService.generateTokenForgot(data,expiresIn)
+      const resetLink = `http://localhost:5000/resetPassword/${token}`
+      await this.otpService.sendEmailForgotPassword(resetLink,seller.email)
+      return "Email sended to the seller"
+    } catch (error) {
+      console.log(error);
+      return null
+    }
+  }
+
+  async resetPassword(password:string,id:string,token:string){
+    try {
+      const user = await this.sellerRepository.checkUserExists(id)
+      if(!user){
+        return "user doesn't exists"
+      }
+      let verifyToken = await this.jwtService.verfiyToken(token)
+      if(!verifyToken){
+        return "token expired"
+      }
+
+      let hashPassword = await this.hashingService.hashing(password)
+      const passwordUpdated = await this.sellerRepository.updateSellerPassword(id,hashPassword)
+      if(passwordUpdated){
+        return "password updated succesfully"
+      }
+    } catch (error) {
+      console.log(error);
     }
   }
 }

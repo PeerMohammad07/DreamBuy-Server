@@ -16,6 +16,8 @@ export default class SellerController implements ISellerController{
     this.verifyOtp = this.verifyOtp.bind(this)
     this.login = this.login.bind(this)
     this.resendOtp = this.resendOtp.bind(this)
+    this.forgotPassword = this.forgotPassword.bind(this)
+    this.resetPassword = this.resetPassword.bind(this)
   }
 
 
@@ -72,7 +74,7 @@ export default class SellerController implements ISellerController{
         res.status(403).json({otpVerified:"false"})
       }else if(response?.status){
         const {token} = response
-        res.cookie("userToken",token,{
+        res.cookie("sellerToken",token,{
           httpOnly:true,
           maxAge:3600000
         })
@@ -89,7 +91,7 @@ export default class SellerController implements ISellerController{
 
   async logout(req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>,res: Response<any, Record<string, any>>){
     try {
-      res.cookie("userToken","",{httpOnly:true,expires:new Date()})
+      res.cookie("sellerToken","",{httpOnly:true,expires:new Date()})
       res.status(200).json({status:true})
     } catch (error) {
       console.log(error);
@@ -109,5 +111,42 @@ export default class SellerController implements ISellerController{
     }
   }
 
-  
+  async forgotPassword( req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>,
+    res: Response<any, Record<string, any>>){
+    try {      
+      const {email} = req.body      
+      const response = await this.sellerUseCase.validateForgotPassword(email)
+      if(response == "Email sended to the seller"){
+        res.status(200).json({message:"email sended succesfully"})
+        return
+      }else if(response == "seller not exist with this email"){
+        res.status(403).json({message : "seller doesnt exist with this email"})
+        return
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async resetPassword(req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>,
+    res: Response<any, Record<string, any>>){
+      try {
+        const {password,userId,token} = req.body
+        console.log("reached",password,userId,token);
+        
+        const response = await this.sellerUseCase.resetPassword(password,userId,token)
+        if(response == "password updated succesfully"){
+          res.status(200).json({message:"password updated succesfully"})
+          return
+        }else if(response == "token expired"){
+          res.status(403).json({message:"token has been expired"})
+          return
+        }else if(response == "user doesn't exists"){
+          res.status(403).json({message:"user doesn't exist"})
+          return
+        }
+      } catch (error) {
+        console.log(error);
+      }
+  }
 }
