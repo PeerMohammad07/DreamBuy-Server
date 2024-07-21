@@ -18,6 +18,10 @@ export default class SellerController implements ISellerController{
     this.resendOtp = this.resendOtp.bind(this)
     this.forgotPassword = this.forgotPassword.bind(this)
     this.resetPassword = this.resetPassword.bind(this)
+    this.updateKycImage = this.updateKycImage.bind(this)
+    this.getSeller = this.getSeller.bind(this)
+    this.kycStatusUpdate = this.kycStatusUpdate.bind(this)
+    this.blockSeller = this.blockSeller.bind(this)
   }
 
 
@@ -145,6 +149,55 @@ export default class SellerController implements ISellerController{
           res.status(403).json({message:"user doesn't exist"})
           return
         }
+      } catch (error) {
+        console.log(error);
+      }
+  }
+
+
+  async updateKycImage(req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>,
+    res: Response<any, Record<string, any>>){
+      try {
+        const {buffer,type,id} = req.body
+        const response = await this.sellerUseCase.updateKycImage(type,buffer,id)
+        if(response?.message == "added succesfully"&&response.status){
+          res.status(200).json({message:"Kyc image added",seller:response.seller})
+        }
+        res.status(403).json(response)
+      } catch (error) {
+        console.log(error);
+      }
+  } 
+
+  async getSeller(req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>,
+    res: Response<any, Record<string, any>>){
+    try {
+      const response = await this.sellerUseCase.getSeller()
+      res.status(200).json({sellers:response})
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async kycStatusUpdate(req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>,
+    res: Response<any, Record<string, any>>){
+    try {
+      const {id,status} = req.body
+      const response = await this.sellerUseCase.kycStatusUpdate(id,status)
+      res.status(200).json({response})
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+
+  async blockSeller(req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>,
+    res: Response<any, Record<string, any>>){
+      try {
+        const {id,status} = req.body
+        const response = await this.sellerUseCase.blockSeller(id,status)   
+        console.log(response);
+        res.status(200).json(response) 
       } catch (error) {
         console.log(error);
       }

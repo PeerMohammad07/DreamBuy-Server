@@ -11,4 +11,8 @@ export default interface ISellerRepository {
   verifyOtp(email : string):Promise<IOtp|null>
   updateSellerVerified(email:string):Promise<ISeller|null>
   updateSellerPassword(id:string,password:string):Promise<ISeller|null>
+  updateKyc(id:string,image:string,url:string):Promise<ISeller|null>
+  getSeller():Promise<ISeller[]|null>
+  kycStatusUpdate(id:string,status:string):Promise<ISeller|null>
+  blockSeller(id:string,status:boolean):Promise<ISeller|null>
 }

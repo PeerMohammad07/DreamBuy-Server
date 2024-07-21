@@ -18,5 +18,6 @@ const AdminController = new adminController(AdminUseCase)
 adminRouter.post("/login",AdminController.login)
 adminRouter.get("/getUsers",AdminController.getUsers)
 adminRouter.put("/blockUser",AdminController.blockUser)
+adminRouter.post("/logout",AdminController.logout)
 
 export default adminRouter

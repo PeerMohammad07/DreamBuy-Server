@@ -22,6 +22,9 @@ const seller = new Schema({
   verficationImage : {
     type:String
   },
+  verificationImageUrl : {
+    type : String
+  },
   image : {
     type:String
   },
@@ -32,8 +35,12 @@ const seller = new Schema({
   },
   kycVerified :{
     type:String,
-    enum : ["approved","rejected","inProgress"],
-    default:"inProgress"
+    enum : ["Not Verified","Verification Pending","Verified","Cancelled"],
+    default:"Not Verified"
+  },
+  phone:{
+    type:Number,
+    required:true
   }
 })
 

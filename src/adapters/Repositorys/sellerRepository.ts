@@ -77,7 +77,42 @@ export default class SellerRepository implements ISellerRepository{
     try {
        return await this.seller.findOneAndUpdate({_id:id},{$set:{password:password}}) 
     } catch (error) {
-        throw new Error("Failed to update user verified ")
+        throw new Error("Failed to update seller verified ")
+    }
+  }
+
+  async updateKyc(id:string,image:string,url:string){
+    try {      
+      return await this.seller.findByIdAndUpdate({_id:id},{$set:{verficationImage:image,kycVerified:"Verification Pending",verificationImageUrl:url}},{new:true})
+    } catch (error) {
+      throw new Error("Failed to update Kyc")
+    }
+  }
+
+
+  async getSeller(){
+    try {
+      return await this.seller.find()
+    } catch (error) {
+      throw new Error("Failed to get Sellers")
+    }
+  }
+
+  async kycStatusUpdate(id:string,status:string){
+    try {
+      return await this.seller.findByIdAndUpdate({_id:id},{$set:{kycVerified:status}},{new:true})
+    } catch (error) {
+      console.log(error);
+      return null
+    }
+  }
+
+  async blockSeller(id:string,status:boolean){
+    try {
+     return await this.seller.findOneAndUpdate({_id:id},{$set:{isBlocked:!status}})
+    } catch (error) {
+      console.log(error);
+      return null
     }
   }
 }

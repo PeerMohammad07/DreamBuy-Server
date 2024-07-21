@@ -1,8 +1,11 @@
+import { createImageUrl, sendObjectToS3 } from "../infrastructure/utils/s3Bucket";
+import { randomImageName, sharpImage } from "../infrastructure/utils/sharpImage";
 import ISellerRepository from "../Interfaces/Repository/sellerRepository";
 import ISellerUsecase from "../Interfaces/UseCase/IsellerUseCase";
 import IhashingService from "../Interfaces/Utils/hashingService";
 import IjwtService from "../Interfaces/Utils/jwtServices";
 import IotpService from "../Interfaces/Utils/otpService";
+
 
 export interface IregisterData {
   name: string;
@@ -68,7 +71,7 @@ export default class SellerUseCase implements ISellerUsecase {
             role: "seller",
           };
           let token = await this.jwtService.generateToken(payload);
-          return { status: true, message: "Otp verification done", token };
+          return { status: true, message: "Otp verification done", token ,sellerData};
         }
       }
       return { status: false, message: "invalid otp", token: "" };
@@ -108,7 +111,7 @@ export default class SellerUseCase implements ISellerUsecase {
           role: "seller",
         };
         let token = await this.jwtService.generateToken(payload);
-        return { status: true, message: "login succesfully", token };
+        return { status: true, message: "login succesfully", token ,seller};
       }else {
         return {status:false,message:"email not found"}
       }
@@ -181,6 +184,59 @@ export default class SellerUseCase implements ISellerUsecase {
       }
     } catch (error) {
       console.log(error);
+    }
+  }
+
+  async updateKycImage(type:string,buffer:string,id:string){
+    try {      
+      const sharpedImage = await sharpImage(buffer)
+      const imageName = await randomImageName()
+      if(sharpedImage){
+         await sendObjectToS3(imageName,type,sharpedImage)
+      }
+      const url = await createImageUrl(imageName)
+      const response = await this.sellerRepository.updateKyc(id,imageName,url)
+      if(response){
+        return {message:"added succesfully",seller:response,status:true}
+      }
+      return {message:"something went wrong",status:false}
+    } catch (error) {
+      console.log(error,"err user case");
+      return null
+    }
+  }
+
+  async getSeller(){
+    try {
+      return await this.sellerRepository.getSeller()
+    } catch (error) {
+      console.log(error);
+      return null
+    }
+  }
+
+
+  async kycStatusUpdate(id:string,status:string){
+    try {
+      const response = await this.sellerRepository.kycStatusUpdate(id,status)
+      return response
+    } catch (error) {
+      console.log(error);
+      return null
+    }
+  }
+
+  async blockSeller(id:string,status:boolean){
+    try {
+      const response = await this.sellerRepository.blockSeller(id,status)
+      if(response?.isBlocked){
+        return "unblocked successfully"
+      }else {
+        return "blocked successfully"
+      }
+    } catch (error) {
+      console.log(error);
+      return null
     }
   }
 }

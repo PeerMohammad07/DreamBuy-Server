@@ -7,6 +7,7 @@ import cookieParser from 'cookie-parser'
 import sellerRouter from '../routes/sellerRoutes'
 import adminRouter from '../routes/adminRoutes'
 
+
 const app = express()
 
 // config dotenv

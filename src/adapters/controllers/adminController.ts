@@ -16,6 +16,7 @@ export default class adminController implements IAdminController {
     this.login = this.login.bind(this)
     this.getUsers = this.getUsers.bind(this)
     this.blockUser = this.blockUser.bind(this)
+    this.logout = this.logout.bind(this)
   }
 
   async login(req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>,
@@ -59,6 +60,16 @@ export default class adminController implements IAdminController {
         const response = await this.adminUseCase.blockUser(id,status)        
         res.status(200).json(response) 
       } catch (error) {
+        console.log(error);
+      }
+  }
+
+  async logout(req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>,
+    res: Response<any, Record<string, any>>){
+      try {
+        res.cookie("adminToken","",{httpOnly:true,expires:new Date()})
+        res.status(200).json({status:true})
+      } catch (error) { 
         console.log(error);
       }
   }

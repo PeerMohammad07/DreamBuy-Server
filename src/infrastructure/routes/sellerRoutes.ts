@@ -27,5 +27,9 @@ sellerRouter.post("/logout",sellerController.logout)
 sellerRouter.post("/resendOtp",sellerController.resendOtp)
 sellerRouter.post("/forgotPassword",sellerController.forgotPassword)
 sellerRouter.post("/resetPassword",sellerController.resetPassword)
+sellerRouter.post("/updateKycImage",sellerController.updateKycImage)
+sellerRouter.get("/getSellers",sellerController.getSeller)
+sellerRouter.post("/kycStatusUpdate",sellerController.kycStatusUpdate)
+sellerRouter.post("/blockSeller",sellerController.blockSeller)
 
 export default sellerRouter
