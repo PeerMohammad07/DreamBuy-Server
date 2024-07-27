@@ -10,7 +10,7 @@ export default class HashingService implements IhashingService{
 
   // Password comparing
   async compare(password:string,hashedPassword:string){
-    try {
+    try {      
       return await bcrypt.compare(password,hashedPassword)
     } catch (error) {
       throw new Error("Failed to compare password")

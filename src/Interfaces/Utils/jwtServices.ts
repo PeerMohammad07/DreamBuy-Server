@@ -2,6 +2,7 @@ export interface tokenData {
   userId : string
   name : string
   role : string
+  iat?: number;
 }
 
 export interface tokenForgotData {
@@ -10,15 +11,16 @@ export interface tokenForgotData {
 }
 
 export interface DecodedJwt {
-  id:string;
+  userId:string;
   role: string;
-  userName?:string;
+  name?:string;
   iat: number;
-  exp: number;
+  exp?: number;
 }
 
 export default interface IjwtService {
   generateToken(data : tokenData):string
   verfiyToken(token:string):DecodedJwt|null
   generateTokenForgot(data:tokenData,expireTime:string):string
+  generateRefreshToken(data:tokenData):string
 }

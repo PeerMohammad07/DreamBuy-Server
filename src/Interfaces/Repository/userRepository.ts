@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import IUser from "../../entity/userEntity";
+import IUser, { IProperty, ISeller } from "../../entity/allEntity";
 import { IregisterBody } from "../Controller/IUserController";
 import { googleLoginData, Itoken } from "../UseCase/IuserUseCase";
 
@@ -20,4 +20,7 @@ export default interface IuserRepository{
   updateUserVerified(email:string):Promise<IUser|null>
   saveGoogleLogin(data:googleLoginData):void
   updateUserPassword(id:string,password:string):Promise<IUser|null>
+  getSaleProperty():Promise<IProperty[]|null>
+  getRentProperty():Promise<IProperty[]|null>
+  updateUser(id:string,name:string,image:string):Promise<IUser|null>
 }

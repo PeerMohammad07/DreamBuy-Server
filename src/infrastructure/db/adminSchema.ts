@@ -1,5 +1,5 @@
 import mongoose, { Schema } from "mongoose";
-import { IAdmin } from "../../entity/userEntity";
+import { IAdmin } from "../../entity/allEntity";
 
 const admin = new Schema({
   name : {

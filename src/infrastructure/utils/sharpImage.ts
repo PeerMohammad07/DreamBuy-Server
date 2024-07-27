@@ -5,7 +5,7 @@ export async function sharpImage(image: string): Promise<Buffer | undefined> {
   try {       
     const buffer = Buffer.from(image,"base64")     
     return await sharp(buffer)
-      .resize({ width: 1000, height: 500, fit: "contain" })
+      .resize({ width: 4000 , height: 3300, fit: "contain" })
       .toBuffer();
   } catch (error) {
     console.log(error, "sharperror");

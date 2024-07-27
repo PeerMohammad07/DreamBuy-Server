@@ -1,11 +1,18 @@
+import IUser, { IProperty, ISeller } from "../../entity/allEntity";
 import { IregisterBody } from "../Controller/IUserController";
 
 export interface Itoken {
   status : boolean
   message : string
   token : string
+  refreshToken ? :string,
 }
 
+export interface updateUser{
+  status:boolean,
+  message:string,
+  user ?: IUser
+}
 
 export interface TokenResponse{
   status:boolean,
@@ -21,6 +28,8 @@ export interface loginRes {
   status:boolean
   message : string
   token?: string
+  refreshToken ?: string
+  user?:IUser
 }
 
 export interface googleLoginData{
@@ -38,4 +47,7 @@ export default interface IuserUseCase{
   googleLogin(data:googleLoginData):Promise<loginRes|null>
   validateForgotPassword(email:string):Promise<string|null>
   resetPassword(password:string,id:string,token:string):Promise<string|void>
+  getSaleProperty():Promise<IProperty[]|null>
+  getRentProperty():Promise<IProperty[]|null>
+  updateUser(id:string,name:string,image:string,type:string):Promise<updateUser|null>
 }

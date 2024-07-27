@@ -43,3 +43,32 @@ export interface IToken extends Document {
   userId : string
   email : string
 }
+
+
+export interface IProperty extends Document {
+  _id : string
+  propertyName: string;
+  sellerId: string;
+  propertyStatus: boolean;
+  propertyFor: string;
+  propertyType: string;
+  state: string;
+  city: string;
+  features: string[];
+  bedroom: string;
+  bathroom: number;
+  description: string;
+  location: string;
+  price: number;
+  propertyImage: string[];
+  square_feet: number;
+}
+
+
+export interface ICategory extends Document {
+  _id : string
+  name : string
+  descripton : string
+  isBlocked : boolean
+  createdAt : Date
+}

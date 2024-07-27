@@ -1,16 +1,21 @@
 import { IregisterBody } from "../Interfaces/Controller/IUserController";
 import IuserRepository from "../Interfaces/Repository/userRepository";
 import IhashingService from "../Interfaces/Utils/hashingService";
-import IuserUseCase, { googleLoginData, loginBody, loginRes } from "../Interfaces/UseCase/IuserUseCase";
+import IuserUseCase, {
+  googleLoginData,
+  loginBody,
+  loginRes,
+} from "../Interfaces/UseCase/IuserUseCase";
 import IotpService from "../Interfaces/Utils/otpService";
 import IjwtService from "../Interfaces/Utils/jwtServices";
+import { randomImageName, sharpImage } from "../infrastructure/utils/sharpImage";
+import { createImageUrl, sendObjectToS3 } from "../infrastructure/utils/s3Bucket";
 
 export default class userUseCase implements IuserUseCase {
   private userRepository: IuserRepository;
   private hashingService: IhashingService;
   private otpService: IotpService;
   private jwtService: IjwtService;
-
 
   constructor(
     userRepository: IuserRepository,
@@ -27,12 +32,12 @@ export default class userUseCase implements IuserUseCase {
   // register
   async register(data: IregisterBody) {
     try {
-      let exist = await this.userRepository.checkEmailExists(data.email);      
-      if (exist) {        
+      let exist = await this.userRepository.checkEmailExists(data.email);
+      if (exist) {
         return {
-          status:false,
-          message:"this user already exist"
-        }
+          status: false,
+          message: "this user already exist",
+        };
       }
       let bycrptedPassword = await this.hashingService.hashing(data.password);
       data.password = bycrptedPassword;
@@ -48,10 +53,10 @@ export default class userUseCase implements IuserUseCase {
   }
 
   // verifyOtp
-  async verifyOtp(email: string,otp:string) {
+  async verifyOtp(email: string, otp: string) {
     try {
       let data = await this.userRepository.verifyOtp(email);
-      
+
       if (data?.otp && data.email && data?.otp == otp) {
         let userData = await this.userRepository.updateUserVerified(data.email);
         if (userData) {
@@ -61,7 +66,8 @@ export default class userUseCase implements IuserUseCase {
             role: "user",
           };
           let token = await this.jwtService.generateToken(payload);
-          return { status: true, message: "Otp verification done", token };
+          let refreshToken = await this.jwtService.generateRefreshToken(payload)
+          return { status: true, message: "Otp verification done", token ,refreshToken,user:userData};
         }
       }
       return { status: false, message: "incorrect otp", token: "" };
@@ -88,10 +94,10 @@ export default class userUseCase implements IuserUseCase {
     }
   }
 
-  // login 
+  // login
   async loginAuthentication(data: loginBody) {
-    try {      
-      const value = await this.userRepository.checkEmailExists(data.email);      
+    try {
+      const value = await this.userRepository.checkEmailExists(data.email);
       if (value) {
         if (!value.password) {
           return {
@@ -99,12 +105,19 @@ export default class userUseCase implements IuserUseCase {
             message: "this account for login only googleAuth",
           };
         }
-        
+
+        if (value.isBlocked) {
+          return {
+            status: false,
+            message: "this user is blocked ",
+          };
+        }
+
         const status = await this.hashingService.compare(
           data.password,
           value.password
         );
-        
+
         if (!status) {
           return {
             status: false,
@@ -112,110 +125,151 @@ export default class userUseCase implements IuserUseCase {
           };
         }
 
-        if (value.otpVerified == false) {          
+        if (value.otpVerified == false) {
           let otp = await this.otpService.generateOtp();
           this.userRepository.saveOtp(value.email, otp);
           this.otpService.sendEmail(value.email, otp, value.name);
-          return {status:false,message:"otp is not verified"}
+          return { status: false, message: "otp is not verified" };
         }
 
-        const payload =  {
-          userId : value._id,
-          name : value.name,
-          role : "user"
-        }
+        const payload = {
+          userId: value._id,
+          name: value.name,
+          role: "user",
+        };
 
-        let token = await this.jwtService.generateToken(payload)
-        return {status:true,message : "Login Succesfully",token}
+        let token = await this.jwtService.generateToken(payload);
+        let refreshToken = await this.jwtService.generateRefreshToken(payload)
+        return { status: true, message: "Login Succesfully",user:value ,token ,refreshToken};
       }
-      return {status:false,message:"Email Not found"}
+      return { status: false, message: "Email Not found" };
     } catch (error) {
       return {
-        status :false,
-        message : ""
-      }
+        status: false,
+        message: "",
+      };
     }
   }
 
   // resend Otp
-  async resendOtp(email:string){
+  async resendOtp(email: string) {
     try {
-      const user = await this.userRepository.checkEmailExists(email)
-      if(user){
+      const user = await this.userRepository.checkEmailExists(email);
+      if (user) {
         let otp = await this.otpService.generateOtp();
         this.userRepository.saveOtp(email, otp);
-        this.otpService.sendEmail(email, otp, user.name);        
-        return "resendOtp successfull"
+        this.otpService.sendEmail(email, otp, user.name);
+        return "resendOtp successfull";
       }
-      return "invalid email"
+      return "invalid email";
     } catch (error) {
       console.log(error);
-      return null
+      return null;
     }
   }
 
   // googleLogin
-  async googleLogin(data:googleLoginData){
-    let user =await this.userRepository.checkEmailExists(data.email)
-    if(!user){
-      await this.userRepository.saveGoogleLogin(data)
+  async googleLogin(data: googleLoginData) {
+    let user = await this.userRepository.checkEmailExists(data.email);
+    if (!user) {
+      await this.userRepository.saveGoogleLogin(data);
     }
-    const loginUser = await this.userRepository.checkEmailExists(data.email)
+    const loginUser = await this.userRepository.checkEmailExists(data.email);
 
     let payload = {
-      userId : loginUser?._id as string,
-      name : loginUser?.name as string,
-      role : "user"
-    }
+      userId: loginUser?._id as string,
+      name: loginUser?.name as string,
+      role: "user",
+    };
 
-    const token = await this.jwtService.generateToken(payload)
-    return {status:true,message:"google Login succesfull",token}
+    const token = await this.jwtService.generateToken(payload);
+    const refreshToken = await this.jwtService.generateRefreshToken(payload)
+    return { status: true, message: "google Login succesfull", token,refreshToken,loginUser};
   }
 
   // forgot password
-  async validateForgotPassword(email:string){
+  async validateForgotPassword(email: string) {
     try {
-      const user = await this.userRepository.checkEmailExists(email)
+      const user = await this.userRepository.checkEmailExists(email);
       console.log(email);
-      
-      if(!user){
-        return "user not exist with this email"
+
+      if (!user) {
+        return "user not exist with this email";
       }
       let data = {
-        userId : user?._id as string,
-        name : user?.name as string,
-        role:"user"
+        userId: user?._id as string,
+        name: user?.name as string,
+        role: "user",
+      };
+      const expiresIn = "3m";
+      const token = await this.jwtService.generateTokenForgot(data, expiresIn);
+      const resetLink = `http://localhost:5000/resetPassword/${token}`;
+      await this.otpService.sendEmailForgotPassword(resetLink, user.email);
+      return "Email sended to the user";
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  }
+
+  async resetPassword(password: string, id: string, token: string) {
+    try {
+      const user = await this.userRepository.checkUserExists(id);
+      if (!user) {
+        return "user doesn't exists";
       }
-      const expiresIn = "3m"
-      const token = await this.jwtService.generateTokenForgot(data,expiresIn)
-      const resetLink = `http://localhost:5000/resetPassword/${token}`
-      await this.otpService.sendEmailForgotPassword(resetLink,user.email)
-      return "Email sended to the user"
+      let verifyToken = await this.jwtService.verfiyToken(token);
+      if (!verifyToken) {
+        return "token expired";
+      }
+
+      let hashPassword = await this.hashingService.hashing(password);
+      const passwordUpdated = await this.userRepository.updateUserPassword(
+        id,
+        hashPassword
+      );
+      if (passwordUpdated) {
+        return "password updated succesfully";
+      }
+    } catch (error) {}
+  }
+
+  async getRentProperty() {
+    try {
+      const response = await this.userRepository.getRentProperty();
+      return response;
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  }
+
+  async getSaleProperty() {
+    try {
+      const response = await this.userRepository.getSaleProperty();
+      return response;
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  }
+
+  async updateUser(id:string,name:string,image:string,type:string){
+    try {
+      const sharpedImage = await sharpImage(image);
+      const imageName = await randomImageName();
+      if (sharpedImage) {
+        await sendObjectToS3(imageName, type, sharpedImage);
+      }
+      const url = await createImageUrl(imageName);
+      const response = await this.userRepository.updateUser(id,name,url)
+      if(response){
+        return {status:true,message:"user updated successfully",user:response}
+      }
+      return {status:false,message:"failed try again"}
     } catch (error) {
       console.log(error);
       return null
     }
   }
-
-  async resetPassword(password:string,id:string,token:string){
-    try {
-      const user = await this.userRepository.checkUserExists(id)
-      if(!user){
-        return "user doesn't exists"
-      }
-      let verifyToken = await this.jwtService.verfiyToken(token)
-      if(!verifyToken){
-        return "token expired"
-      }
-
-      let hashPassword = await this.hashingService.hashing(password)
-      const passwordUpdated = await this.userRepository.updateUserPassword(id,hashPassword)
-      if(passwordUpdated){
-        return "password updated succesfully"
-      }
-    } catch (error) {
-      
-    }
-  }
-
 }

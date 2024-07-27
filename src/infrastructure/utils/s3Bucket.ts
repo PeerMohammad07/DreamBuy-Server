@@ -1,6 +1,5 @@
 import { S3Client , PutObjectCommand, GetObjectCommand } from "@aws-sdk/client-s3";
 import dotenv from 'dotenv'
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 dotenv.config()
 
@@ -31,12 +30,5 @@ export async function sendObjectToS3(name:string,type:string,buffer:Buffer){
 }
 
 export async function createImageUrl(image:string){
-  const params = {
-    Bucket : bucketName,
-    Key : image
-  }
-
-  const command = new GetObjectCommand(params)
-  const url = await getSignedUrl(s3,command,{expiresIn:3600})
-  return url
+  return `https://${bucketName}.s3.amazonaws.com/${image}`
 }
