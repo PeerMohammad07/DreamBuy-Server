@@ -142,6 +142,8 @@ export default class SellerRepository implements ISellerRepository {
 
   async addProperty(data: Property) {
     try {
+      console.log(data,"data");
+      
       const property = new this.property({
         propertyName: data.propertyName,
         sellerId: data.sellerId,
@@ -156,6 +158,7 @@ export default class SellerRepository implements ISellerRepository {
         location: data.location,
         Price: data.expectedPrice,
         propertyImage: data.images,
+        sqft:data.sqft,
       });
       return await property.save();
     } catch (error) {
@@ -166,7 +169,7 @@ export default class SellerRepository implements ISellerRepository {
 
   async updateSeller(sellerId: string, name: string, phone: string){
     try {
-      return await this.seller.findByIdAndUpdate({_id:sellerId},{$set:{name:name,phone:phone}})
+      return await this.seller.findByIdAndUpdate({_id:sellerId},{$set:{name:name,phone:phone}},{new:true})
     } catch (error) {
       console.log(error);
       return null

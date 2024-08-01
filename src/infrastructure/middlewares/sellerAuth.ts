@@ -17,7 +17,7 @@ interface IAuthRequest extends Request {
 const sellerAuth = async (req: IAuthRequest, res: Response, next: NextFunction) => {
   const refreshToken = req.cookies.sellerRefreshToken
   let sellerToken = req.cookies.sellerToken;
-
+  
   if (!refreshToken) {
     res.status(401)
       .json({ message: "Not authorized, no refresh token" });
@@ -25,7 +25,7 @@ const sellerAuth = async (req: IAuthRequest, res: Response, next: NextFunction) 
 
   if (!sellerToken || sellerToken === '' || Object.keys(sellerToken).length === 0) {
     try {
-      const newUserToken = refreshAccessToken(refreshToken)
+      const newUserToken = await refreshAccessToken(refreshToken)
       res.cookie("sellerToken", newUserToken, {
         httpOnly: true,
         maxAge: 3600000,

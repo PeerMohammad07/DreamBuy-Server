@@ -109,4 +109,21 @@ export default class adminUseCase implements IadminUseCase {
       return null;
     }
   }
+
+  async addCategory(name:string,description:string){
+    try {
+      return await this.adminRepository.addCategory(name,description)
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async editCategory(id:string,name:string,description:string){
+    try {
+      return this.adminRepository.editCategory(id,name,description)
+    } catch (error) {
+      console.log(error);
+      return null
+    }
+  }
 }

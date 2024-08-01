@@ -1,5 +1,11 @@
 import { Document } from "mongoose";
 
+interface IPremiumSubscription {
+  subscriptionType?: 'weekly' | 'monthly' | 'three_months';
+  startDate?: Date;
+  expiryDate?: Date;
+}
+
 export default interface IUser extends Document {
   _id:string
   name: string;
@@ -8,6 +14,8 @@ export default interface IUser extends Document {
   isBlocked: boolean;
   otpVerified: boolean;
   image?: string;
+  isPremium: boolean;
+  premiumSubscription?: IPremiumSubscription;
 }
 
 export interface ISeller extends Document {
@@ -61,7 +69,7 @@ export interface IProperty extends Document {
   location: string;
   price: number;
   propertyImage: string[];
-  square_feet: number;
+  sqft: number;
 }
 
 

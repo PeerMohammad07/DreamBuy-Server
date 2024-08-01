@@ -5,7 +5,7 @@ import { ParsedQs } from "qs";
 export interface IregisterBody {
   name: string;
   email: string;
-  password: string;
+  password?: string;
 }
 
 export interface IUserController {
@@ -41,4 +41,6 @@ export interface IUserController {
     req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>,
     res: Response<any, Record<string, any>>
   ): void;
+  googleRegister(req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>,
+    res: Response<any, Record<string, any>>):void
 }

@@ -12,7 +12,7 @@ const userSchema = new Schema<IUser>({
   },
   password: {
     type: String,
-    required: true
+    required: false
   },
   isBlocked: {
     type: Boolean,
@@ -27,9 +27,34 @@ const userSchema = new Schema<IUser>({
   image: {
     type: String,
     required: false
+  },
+  isPremium: {
+    type: Boolean,
+    required: true,
+    default: false
+  },
+  premiumSubscription: {
+    type: {
+      subscriptionType: {
+        type: String,
+        enum: ['weekly', 'monthly', 'three_months'],
+        required: false
+      },
+      startDate: {
+        type: Date,
+        required: false
+      },
+      expiryDate: {
+        type: Date,
+        required: false
+      }
+    },
+    required: false,
+    default: null
   }
+
 });
 
-const UserModel = mongoose.model<IUser>('User', userSchema); 
+const UserModel = mongoose.model<IUser>('User', userSchema);
 
 export default UserModel;

@@ -39,8 +39,10 @@ export default class userUseCase implements IuserUseCase {
           message: "this user already exist",
         };
       }
-      let bycrptedPassword = await this.hashingService.hashing(data.password);
-      data.password = bycrptedPassword;
+      if (data.password) {
+        let bycrptedPassword = await this.hashingService.hashing(data.password);
+        data.password = bycrptedPassword;
+      }
 
       await this.userRepository.createUser(data);
 
@@ -67,7 +69,7 @@ export default class userUseCase implements IuserUseCase {
           };
           let token = await this.jwtService.generateToken(payload);
           let refreshToken = await this.jwtService.generateRefreshToken(payload)
-          return { status: true, message: "Otp verification done", token ,refreshToken,user:userData};
+          return { status: true, message: "Otp verification done", token, refreshToken, user: userData };
         }
       }
       return { status: false, message: "incorrect otp", token: "" };
@@ -138,9 +140,9 @@ export default class userUseCase implements IuserUseCase {
           role: "user",
         };
 
-        let token = await this.jwtService.generateToken(payload);
+        let token = await this.jwtService.generateToken(payload)
         let refreshToken = await this.jwtService.generateRefreshToken(payload)
-        return { status: true, message: "Login Succesfully",user:value ,token ,refreshToken};
+        return { status: true, message: "Login Succesfully", user: value, token, refreshToken };
       }
       return { status: false, message: "Email Not found" };
     } catch (error) {
@@ -168,11 +170,35 @@ export default class userUseCase implements IuserUseCase {
     }
   }
 
+  // google Register
+  async googleRegister(data: googleLoginData) {
+    try {
+      let user = await this.userRepository.checkEmailExists(data.email);
+      if (user) {
+        return { status: false, message: "user already exists with this email" };
+      }
+      const newUser = await this.userRepository.createUser(data)
+
+      let payload = {
+        userId: newUser?._id as string,
+        name: newUser?.name as string,
+        role: "user",
+      };
+
+      const token = await this.jwtService.generateToken(payload);
+      const refreshToken = await this.jwtService.generateRefreshToken(payload)
+      return { status: true, message: "google register succesfull", token, refreshToken, newUser };
+    } catch (error) {
+      console.log(error);
+      return null
+    }
+  }
+
   // googleLogin
   async googleLogin(data: googleLoginData) {
     let user = await this.userRepository.checkEmailExists(data.email);
     if (!user) {
-      await this.userRepository.saveGoogleLogin(data);
+      return { status: false, message: "please register to login" };
     }
     const loginUser = await this.userRepository.checkEmailExists(data.email);
 
@@ -184,7 +210,7 @@ export default class userUseCase implements IuserUseCase {
 
     const token = await this.jwtService.generateToken(payload);
     const refreshToken = await this.jwtService.generateRefreshToken(payload)
-    return { status: true, message: "google Login succesfull", token,refreshToken,loginUser};
+    return { status: true, message: "google Login succesfull", token, refreshToken, loginUser };
   }
 
   // forgot password
@@ -231,7 +257,7 @@ export default class userUseCase implements IuserUseCase {
       if (passwordUpdated) {
         return "password updated succesfully";
       }
-    } catch (error) {}
+    } catch (error) { }
   }
 
   async getRentProperty() {
@@ -254,19 +280,95 @@ export default class userUseCase implements IuserUseCase {
     }
   }
 
-  async updateUser(id:string,name:string,image:string,type:string){
+  async updateUser(id: string, name: string, image: string, type: string) {
     try {
-      const sharpedImage = await sharpImage(image);
-      const imageName = await randomImageName();
-      if (sharpedImage) {
-        await sendObjectToS3(imageName, type, sharpedImage);
+      let url = image;
+      if(!image.includes('https://dreambuy')){
+        const sharpedImage = await sharpImage(2000, 2000, image);
+        const imageName = await randomImageName();
+        if (sharpedImage) {
+          await sendObjectToS3(imageName, type, sharpedImage);
+        }
+         url = await createImageUrl(imageName);
       }
-      const url = await createImageUrl(imageName);
-      const response = await this.userRepository.updateUser(id,name,url)
-      if(response){
-        return {status:true,message:"user updated successfully",user:response}
+      const response = await this.userRepository.updateUser(id, name, url)
+      if (response) {
+        return { status: true, message: "user updated successfully", user: response }
       }
-      return {status:false,message:"failed try again"}
+      return { status: false, message: "failed try again" }
+    } catch (error) {
+      console.log(error);
+      return null
+    }
+  }
+
+  async getPremium(data: any) {
+    try {
+      const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+      const subscriptionType = data.interval
+      const session = await stripe.checkout.sessions.create({
+        mode: 'subscription',
+        line_items: [
+          {
+            price: data.id,
+            quantity: 1,
+          },
+        ],
+        success_url: `${process.env.CLIENT_SIDE_URL}paymentStatus?success=true&Type=${subscriptionType}`,
+        cancel_url: `${process.env.CLIENT_SIDE_URL}paymentStatus`,
+      });
+      return session
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async updatePremium(id: string, type: string) {
+    try {
+      const startDate = new Date();
+      let expiryDate = new Date();
+      if (type === 'weekly') {
+        expiryDate.setDate(startDate.getDate() + 7);
+      } else if (type === 'monthly') {
+        expiryDate.setMonth(startDate.getMonth() + 1);
+      } else if (type === 'three_months') {
+        expiryDate.setMonth(startDate.getMonth() + 3);
+      } else {
+        throw new Error("Invalid subscription type");
+      }
+
+      const user =  await this.userRepository.checkUserExists(id)
+      if(user&&user.isPremium&&user.premiumSubscription?.expiryDate){
+        if(user.premiumSubscription?.subscriptionType == "weekly"){
+          expiryDate.setDate(user.premiumSubscription.expiryDate.getDate() + 7);
+        }else if(user.premiumSubscription?.subscriptionType == "monthly"){
+          expiryDate.setDate(user.premiumSubscription.expiryDate.getMonth() + 1);
+        }else if(user.premiumSubscription?.subscriptionType == "three_months"){
+          expiryDate.setDate(user.premiumSubscription.expiryDate.getMonth() + 3);
+        }
+      }
+
+      const newSubscription = {
+        subscriptionType: type,
+        startDate: startDate,
+        expiryDate: expiryDate
+      };
+      const updatedUser = await this.userRepository.updatePremium(id, newSubscription)
+      return updatedUser
+    } catch (error) {
+      console.log(error);
+      return null
+    }
+  }
+
+  async productDetail(id: string) {
+    try {
+      const response = await this.userRepository.productDetail(id)
+      if (response) {
+        return { message: "productDetails got successfully", status: true, data: response }
+      } else {
+        return { message: "something went wrong", status: false }
+      }
     } catch (error) {
       console.log(error);
       return null

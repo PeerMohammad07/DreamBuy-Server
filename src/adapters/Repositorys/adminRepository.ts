@@ -82,4 +82,25 @@ export default class adminRepository implements IadminRepository {
       return null;
     }
   }
+
+  async addCategory(name:string,description:string){
+    try {       
+      const category = new this.category({
+        name,
+        description:description
+      })
+      return await category.save()
+    } catch (error) {
+      throw new Error("Failed to add Category")
+    }
+  }
+
+  async editCategory(id:string,name:string,description:string){
+    try {       
+      return await this.category.findByIdAndUpdate({_id:id},{$set:{name:name,description:description}},{new:true})
+    } catch (error) {
+      console.log(error);
+      return null
+    }
+  }
 }

@@ -15,7 +15,6 @@ interface IAuthRequest extends Request {
 const userAuth = async (req: IAuthRequest, res: Response, next: NextFunction) => {
   const refreshToken = req.cookies.userRefreshToken
   let userToken = req.cookies.userToken;
-  console.log(userToken, "user");
 
   if (!refreshToken) {
     res.status(401)
@@ -24,7 +23,7 @@ const userAuth = async (req: IAuthRequest, res: Response, next: NextFunction) =>
 
   if (!userToken || userToken === '' || Object.keys(userToken).length === 0) {
     try {
-      const newUserToken = refreshAccessToken(refreshToken)
+      const newUserToken = await refreshAccessToken(refreshToken)
       res.cookie("userToken", newUserToken, {
         httpOnly: true,
         maxAge: 3600000,
@@ -39,7 +38,6 @@ const userAuth = async (req: IAuthRequest, res: Response, next: NextFunction) =>
 
   try {
     const decoded = jwtService.verfiyToken(userToken)
-    console.log(decoded, "decode");
     let user;
     if (decoded) {
       user = await userRepo.checkUserExists(decoded.userId)
@@ -49,7 +47,7 @@ const userAuth = async (req: IAuthRequest, res: Response, next: NextFunction) =>
       return res.status(401).json({ message: "User not found" });
     }
 
-    if (user.isBlocked) {
+    if (user.isBlocked) {      
       return res.status(401).json({ message: "You are blocked by admin!" });
     }
 
@@ -67,7 +65,7 @@ const userAuth = async (req: IAuthRequest, res: Response, next: NextFunction) =>
 
 
 async function refreshAccessToken(refreshToken: string) {
-  try {
+  try {    
     const decoded = await jwtService.verifyRefreshToken(refreshToken)
     if (decoded && decoded.name) {
       const newToken = await jwtService.generateToken({ userId: decoded?.userId, name: decoded?.name, role: decoded?.role })

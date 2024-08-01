@@ -19,11 +19,15 @@ export default class userController implements IUserController {
     this.logout = this.logout.bind(this);
     this.resendOtp = this.resendOtp.bind(this);
     this.googleLogin = this.googleLogin.bind(this);
+    this.googleRegister = this.googleRegister.bind(this)
     this.forgotPassword = this.forgotPassword.bind(this);
     this.resetPassword = this.resetPassword.bind(this);
     this.getRentProperty = this.getRentProperty.bind(this);
     this.getSaleProperty = this.getSaleProperty.bind(this);
     this.updateUser = this.updateUser.bind(this)
+    this.getPremium = this.getPremium.bind(this)
+    this.updatePremium = this.updatePremium.bind(this)
+    this.productDetail = this.productDetail.bind(this)
   }
 
   async register(
@@ -178,6 +182,34 @@ export default class userController implements IUserController {
     }
   }
 
+  async googleRegister(req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>,
+    res: Response<any, Record<string, any>>){
+    try {
+      const { name, email, image } = req.body;
+    const data = {
+      name,
+      email,
+      image,
+    };
+    const response = await this.userUseCase.googleRegister(data)
+    if(response?.status){
+      const { token, refreshToken } = response;
+        res.cookie("userToken", token, {
+          httpOnly: true,
+          maxAge: 360000,
+        }).cookie("userRefreshToken", refreshToken, {
+          httpOnly: true,
+          maxAge: 30 * 24 * 60 * 60 * 1000,
+        })
+      res.status(200).json(response)
+    }else{
+      res.status(403).json(response)
+    }
+    } catch (error) {
+      
+    }
+  }
+
   async googleLogin(
     req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>,
     res: Response<any, Record<string, any>>
@@ -190,7 +222,7 @@ export default class userController implements IUserController {
     };
     const response = await this.userUseCase.googleLogin(data);
 
-    if (response?.message == "google Login succesfull") {
+    if (response?.status&&response?.message == "google Login succesfull") {
       const { token,refreshToken } = response;
       res.cookie("userToken", token, {
         httpOnly: true,
@@ -199,8 +231,10 @@ export default class userController implements IUserController {
         httpOnly:true,
         maxAge:30 * 24 * 60 * 60 * 1000
       })
+      res.status(200).json(response);
+    }else{
+      res.status(403).json(response)
     }
-    res.status(200).json(response);
   }
 
   async forgotPassword(
@@ -283,5 +317,39 @@ export default class userController implements IUserController {
       } catch (error) {
         console.log(error);
       }
+  }
+
+
+  async getPremium(req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>,
+    res: Response<any, Record<string, any>>){
+    try {      
+      const {data} = req.body
+      const session = await this.userUseCase.getPremium(data)
+      res.status(200).json({ session })      
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async updatePremium(req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>,
+    res: Response<any, Record<string, any>>){
+    try {
+      const {type,id} = req.body
+      const response = await this.userUseCase.updatePremium(id,type)      
+      res.status(200).json(response)
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async productDetail(req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>,
+    res: Response<any, Record<string, any>>){
+    try {
+      const {id} = req.body
+      const response  = await this.userUseCase.productDetail(id)
+      res.status(200).json(response)
+    } catch (error) {
+      console.log(error);
+    }
   }
 }

@@ -1,14 +1,13 @@
 import sharp from "sharp";
 import crypto from "crypto"
 
-export async function sharpImage(image: string): Promise<Buffer | undefined> {
+export async function sharpImage(width:number,height:number,image: string): Promise<Buffer | undefined> {
   try {       
     const buffer = Buffer.from(image,"base64")     
     return await sharp(buffer)
-      .resize({ width: 4000 , height: 3300, fit: "contain" })
+      .resize({ width: width , height: height, fit: "fill" })
       .toBuffer();
   } catch (error) {
-    console.log(error, "sharperror");
     return undefined;
   }
 }

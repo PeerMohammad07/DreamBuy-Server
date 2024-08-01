@@ -29,5 +29,7 @@ adminRouter.get("/getSellers",adminAuth ,AdminController.getSeller);
 adminRouter.put("/blockUser",adminAuth ,AdminController.blockUser);
 adminRouter.get("/getCategory",adminAuth ,AdminController.getCategory)
 adminRouter.put("/blockCategory",adminAuth ,AdminController.blockCategory)
+adminRouter.post("/addCategory",adminAuth,AdminController.addCategory)
+adminRouter.put("/editCategory",adminAuth,AdminController.editCategory)
 
 export default adminRouter;

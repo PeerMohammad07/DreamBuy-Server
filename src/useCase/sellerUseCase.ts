@@ -111,6 +111,13 @@ export default class SellerUseCase implements ISellerUsecase {
           };
         }
 
+        if (seller.isBlocked) {
+          return {
+            status: false,
+            message: "this user is blocked ",
+          };
+        }
+
         if (seller.otpVerified == false) {
           const otp = await this.otpService.generateOtp();
           this.sellerRepository.saveOtp(seller.email, otp);
@@ -204,7 +211,7 @@ export default class SellerUseCase implements ISellerUsecase {
 
   async updateKycImage(type: string, buffer: string, id: string) {
     try {
-      const sharpedImage = await sharpImage(buffer);
+      const sharpedImage = await sharpImage(2000,2000,buffer);
       const imageName = await randomImageName();
       if (sharpedImage) {
         await sendObjectToS3(imageName, type, sharpedImage);
@@ -250,7 +257,7 @@ export default class SellerUseCase implements ISellerUsecase {
   }
 
   async addProperty(id: string, data: PropertyData) {
-    try {
+    try {      
       const seller = await this.sellerRepository.checkUserExists(id);
       if (!seller) {
         throw new Error("seller doesnt exist with this id");
@@ -259,10 +266,9 @@ export default class SellerUseCase implements ISellerUsecase {
       const imageUrls = await Promise.all(
         data.images.map(async (image) => {
           try {
-            // Sharpen the image
-            const sharpedImage = await sharpImage(image.base64String);
+            // Sharpen the image      
+            const sharpedImage = await sharpImage(2000,2000,image.base64String);
             const imageName = await randomImageName();
-
             if (sharpedImage) {
               await sendObjectToS3(imageName, image.fileType, sharpedImage);
               return await createImageUrl(imageName);
@@ -275,7 +281,7 @@ export default class SellerUseCase implements ISellerUsecase {
           }
         })
       );
-
+      
       const validImageUrls = imageUrls.filter(
         (url): url is string => url !== null
       );
@@ -317,7 +323,7 @@ export default class SellerUseCase implements ISellerUsecase {
     try {
       const response = await this.sellerRepository.updateSeller(sellerId,name,phone)
       if(response){
-        return {status:true,message:"seller updated"}
+        return {status:true,message:"seller updated",seller:response}
       }
       return {status:false , message:"invalid seller Id"}
     } catch (error) {

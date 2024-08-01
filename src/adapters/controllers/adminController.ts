@@ -16,6 +16,8 @@ export default class adminController implements IAdminController {
     this.logout = this.logout.bind(this);
     this.getCategory = this.getCategory.bind(this)
     this.blockCategory = this.blockCategory.bind(this)
+    this.addCategory = this.addCategory.bind(this)
+    this.editCategory = this.editCategory.bind(this)
   }
 
   async login(
@@ -119,4 +121,27 @@ export default class adminController implements IAdminController {
       console.log(error);
     }
   }
+
+  async addCategory(req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>,
+    res: Response<any, Record<string, any>>) {
+    try {
+      const { name, description } = req.body
+      const response = await this.adminUseCase.addCategory(name, description)
+      res.status(200).json({ response })
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async editCategory(req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>,
+    res: Response<any, Record<string, any>>) {
+    try {
+      const { id, name, description } = req.body
+      const response = await this.adminUseCase.editCategory(id, name, description)
+      res.status(200).json({ response })
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
 }

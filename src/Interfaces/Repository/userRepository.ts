@@ -10,6 +10,11 @@ export interface IotpData {
   createdAt : Date
 }
 
+export interface IPremiumSubscription {
+  subscriptionType: string;
+  startDate: Date;
+  expiryDate: Date;
+}
 
 export default interface IuserRepository{
   checkEmailExists(email:string):Promise<IUser|null>
@@ -23,4 +28,6 @@ export default interface IuserRepository{
   getSaleProperty():Promise<IProperty[]|null>
   getRentProperty():Promise<IProperty[]|null>
   updateUser(id:string,name:string,image:string):Promise<IUser|null>
+  updatePremium(id:string,newSubscription:IPremiumSubscription): Promise<IUser | null>
+  productDetail(id:string):Promise<IProperty|null>
 }

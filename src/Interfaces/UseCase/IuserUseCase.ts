@@ -38,6 +38,18 @@ export interface googleLoginData{
   image:string
 }
 
+interface premiumData {
+  id:string
+  price : string,
+  interval : string
+}
+
+interface returnMessage {
+  status:boolean,
+  message:string,
+  data ?: IProperty|null
+}
+
 export default interface IuserUseCase{
   register(data:IregisterBody):Promise<void|loginRes>
   verifyOtp(email:string,otp:string):Promise<Itoken>
@@ -45,9 +57,13 @@ export default interface IuserUseCase{
   loginAuthentication(data:loginBody):Promise<loginRes|null>
   resendOtp(email:string):Promise<string|null>
   googleLogin(data:googleLoginData):Promise<loginRes|null>
+  googleRegister(data: googleLoginData) :Promise<loginRes|null>
   validateForgotPassword(email:string):Promise<string|null>
   resetPassword(password:string,id:string,token:string):Promise<string|void>
   getSaleProperty():Promise<IProperty[]|null>
   getRentProperty():Promise<IProperty[]|null>
   updateUser(id:string,name:string,image:string,type:string):Promise<updateUser|null>
+  getPremium(data:any):Promise<null>
+  updatePremium(id:string,type:string):Promise<IUser|null>
+  productDetail(id:string):Promise<returnMessage|null>
 }

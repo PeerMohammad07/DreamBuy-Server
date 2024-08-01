@@ -40,11 +40,18 @@ userRouter.post("/verifyOtp", UserController.verifyOtp);
 userRouter.post("/logout", UserController.logout);
 userRouter.post("/getToken", UserController.getToken);
 userRouter.post("/resendOtp", UserController.resendOtp);
+userRouter.post('/googleRegister',UserController.googleRegister)
 userRouter.post("/googleLogin", UserController.googleLogin);
 userRouter.post("/forgotPassword", UserController.forgotPassword);
 userRouter.post("/resetPassword", UserController.resetPassword);
+userRouter.post('/productDetail',UserController.productDetail)
+
 userRouter.get("/getRentProperty", UserController.getRentProperty);
 userRouter.get("/getSaleProperty", UserController.getSaleProperty);
+
 userRouter.put('/updateUser', UserController.updateUser)
+
+userRouter.patch('/getPremium',userAuth,UserController.getPremium)
+userRouter.patch('/updatePremium',userAuth,UserController.updatePremium)
 
 export default userRouter;

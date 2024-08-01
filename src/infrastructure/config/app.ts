@@ -6,6 +6,7 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import sellerRouter from "../routes/sellerRoutes";
 import adminRouter from "../routes/adminRoutes";
+import job from "../utils/cronJob";
 
 const app = express();
 
@@ -34,5 +35,8 @@ app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 app.use("/api", userRouter);
 app.use("/api/seller", sellerRouter);
 app.use("/api/admin", adminRouter);
+
+job.start()
+
 
 export default app;

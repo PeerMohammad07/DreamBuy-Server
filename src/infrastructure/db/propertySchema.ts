@@ -48,19 +48,29 @@ const propertySchema = new Schema({
     required: true,
   },
   location: {
-    type: String,
-    required: true,
+    location: {
+      type: String,
+      required: true,
+    },
+    latitude: {
+      type: Number,
+      required: true,
+    },
+    longitude: {
+      type: Number,
+      required: true,
+    }
   },
   Price: {
-    type: Number,
+    type: String,
     required: true,
   },
   propertyImage: {
     type: Array,
     required: true,
   },
-  square_feet: {
-    type: Number,
+  sqft: {
+    type: String,
     requried: true,
   },
 });

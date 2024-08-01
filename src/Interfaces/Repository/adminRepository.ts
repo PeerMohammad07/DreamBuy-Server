@@ -8,4 +8,6 @@ export default interface IadminRepository {
   blockOrUnBlockUser(id:string,status:boolean):Promise<IUser|null>
   getCategory():Promise<ICategory[]|null>
   blockOrUnBlockCategory(id: string, status: boolean):Promise<ICategory|null>
+  addCategory(name:string,description:string):Promise<ICategory|void>
+  editCategory(id:string,name:string,description:string):Promise<ICategory|null>
 }

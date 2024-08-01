@@ -16,7 +16,7 @@ interface IAuthRequest extends Request {
 const adminAuth = async (req: IAuthRequest, res: Response, next: NextFunction) => {
   const refreshToken = req.cookies.adminRefreshToken
   let adminToken = req.cookies.adminToken;
-
+  
   if (!refreshToken) {
     res.status(401)
       .json({ message: "Not authorized, no refresh token" });

@@ -15,6 +15,7 @@ export interface updateKycReturn {
 }
 
 export interface PropertyData {
+  sqft:string
   propertyType: string;
   propertyFor: string;
   propertyName: string;
@@ -32,6 +33,7 @@ export interface PropertyData {
 
 
 export interface Property {
+  sqft:String
   propertyType: string;
   propertyFor: string;
   propertyName: string;
@@ -60,5 +62,5 @@ export default interface ISellerUsecase {
   blockSeller(id: string, status: boolean): Promise<string | null>
   addProperty(id: string, data: PropertyData): Promise<string | null>
   changePassword(oldPassword:string,newPassword:string,sellerId:string):Promise<string|null>
-  updateSeller(name:string,phone:string,sellerId:string):Promise<returnMessage|null>
+  updateSeller(name:string,phone:string,sellerId:string):Promise<updateKycReturn|null>
 }

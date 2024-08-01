@@ -2,6 +2,7 @@ import { Model } from "mongoose";
 import IUser, { IOtp, IProperty, ISeller, IToken } from "../../entity/allEntity";
 import IuserRepository, {
   IotpData,
+  IPremiumSubscription,
 } from "../../Interfaces/Repository/userRepository";
 import { IregisterBody } from "../../Interfaces/Controller/IUserController";
 import { googleLoginData } from "../../Interfaces/UseCase/IuserUseCase";
@@ -10,6 +11,7 @@ export default class userRepository implements IuserRepository {
   private user: Model<IUser>;
   private otp: Model<IOtp>;
   private property: Model<IProperty>;
+  
 
   constructor(
     user: Model<IUser>,
@@ -125,6 +127,26 @@ export default class userRepository implements IuserRepository {
       ).exec();
     } catch (error) {
       throw new Error("Failed to update user");
+    }
+  }
+
+  async updatePremium(id:string,newSubscription:IPremiumSubscription): Promise<IUser | null> {
+    try {
+      return await this.user.findByIdAndUpdate(
+        { _id: id },
+        { $set: { isPremium:true ,premiumSubscription: newSubscription }},
+        { new: true }
+      ).exec();
+    } catch (error) {
+      throw new Error("Failed to update user");
+    }
+  }
+
+  async productDetail(id:string){
+    try {
+      return await this.property.findById({_id:id})
+    } catch (error) {
+      throw new Error("Failed to get product");
     }
   }
 }

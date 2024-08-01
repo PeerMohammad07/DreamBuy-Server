@@ -232,7 +232,6 @@ export default class SellerController implements ISellerController {
     try {
       const { id, status } = req.body;
       const response = await this.sellerUseCase.blockSeller(id, status);
-      console.log(response);
       res.status(200).json(response);
     } catch (error) {
       console.log(error);
@@ -242,7 +241,7 @@ export default class SellerController implements ISellerController {
   async addProperty(
     req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>,
     res: Response<any, Record<string, any>>
-  ) {
+  ) {    
     try {
       const {
         sellerId,
@@ -258,6 +257,7 @@ export default class SellerController implements ISellerController {
         description,
         images,
         location,
+        sqft,
       } = req.body.data;
 
       const data = {
@@ -274,6 +274,7 @@ export default class SellerController implements ISellerController {
         images,
         location,
         sellerId,
+        sqft
       };
       const response = await this.sellerUseCase.addProperty(sellerId, data);
       res.status(200).json(response);
