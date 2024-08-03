@@ -1,5 +1,5 @@
 import { IAdminController } from "../../Interfaces/Controller/IAdminController";
-import { Request, response, Response } from "express";
+import { Request, Response } from "express";
 import { ParamsDictionary } from "express-serve-static-core";
 import { ParsedQs } from "qs";
 import { IadminUseCase } from "../../Interfaces/UseCase/IadminUseCase";
@@ -11,13 +11,18 @@ export default class adminController implements IAdminController {
     this.adminUseCase = adminUseCase;
     this.login = this.login.bind(this);
     this.getUsers = this.getUsers.bind(this);
-    this.getSeller = this.getSeller.bind(this)
+    this.getSeller = this.getSeller.bind(this);
     this.blockUser = this.blockUser.bind(this);
     this.logout = this.logout.bind(this);
-    this.getCategory = this.getCategory.bind(this)
-    this.blockCategory = this.blockCategory.bind(this)
-    this.addCategory = this.addCategory.bind(this)
-    this.editCategory = this.editCategory.bind(this)
+    this.getCategory = this.getCategory.bind(this);
+    this.blockCategory = this.blockCategory.bind(this);
+    this.addCategory = this.addCategory.bind(this);
+    this.editCategory = this.editCategory.bind(this);
+    this.blockProperty = this.blockProperty.bind(this);
+    this.getAmenities = this.getAmenities.bind(this);
+    this.addAmenity = this.addAmenity.bind(this);
+    this.editAmenity = this.editAmenity.bind(this);
+    this.blockAmenity = this.blockAmenity.bind(this)
   }
 
   async login(
@@ -85,7 +90,6 @@ export default class adminController implements IAdminController {
     }
   }
 
-
   async getSeller(
     req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>,
     res: Response<any, Record<string, any>>
@@ -98,7 +102,8 @@ export default class adminController implements IAdminController {
     }
   }
 
-  async getCategory(req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>,
+  async getCategory(
+    req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>,
     res: Response<any, Record<string, any>>
   ) {
     try {
@@ -122,23 +127,91 @@ export default class adminController implements IAdminController {
     }
   }
 
-  async addCategory(req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>,
-    res: Response<any, Record<string, any>>) {
+  async addCategory(
+    req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>,
+    res: Response<any, Record<string, any>>
+  ) {
     try {
-      const { name, description } = req.body
-      const response = await this.adminUseCase.addCategory(name, description)
-      res.status(200).json({ response })
+      const { name, description } = req.body;
+      const response = await this.adminUseCase.addCategory(name, description);
+      res.status(200).json({ response });
     } catch (error) {
       console.log(error);
     }
   }
 
-  async editCategory(req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>,
-    res: Response<any, Record<string, any>>) {
+  async editCategory(
+    req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>,
+    res: Response<any, Record<string, any>>
+  ) {
     try {
-      const { id, name, description } = req.body
-      const response = await this.adminUseCase.editCategory(id, name, description)
-      res.status(200).json({ response })
+      const { id, name, description } = req.body;
+      const response = await this.adminUseCase.editCategory(id, name, description);
+      res.status(200).json({ response });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async blockProperty(
+    req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>,
+    res: Response<any, Record<string, any>>
+  ) {
+    try {
+      const { id, status } = req.body;
+      const response = await this.adminUseCase.blockProperty(id, status);
+      res.status(200).json(response);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async getAmenities(
+    req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>,
+    res: Response<any, Record<string, any>>
+  ) {
+    try {
+      const response = await this.adminUseCase.getAmenities();
+      res.status(200).json({ amenities: response });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async addAmenity(
+    req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>,
+    res: Response<any, Record<string, any>>
+  ) {
+    try {
+      const { name } = req.body;
+      const response = await this.adminUseCase.addAmenity(name);
+      res.status(200).json({ amenity: response });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async editAmenity(
+    req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>,
+    res: Response<any, Record<string, any>>
+  ) {
+    try {
+      const { id, name } = req.body;
+      const response = await this.adminUseCase.editAmenity(id, name);
+      res.status(200).json({ amenity: response });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async blockAmenity(
+    req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>,
+    res: Response<any, Record<string, any>>
+  ) {
+    try {
+      const { id, status } = req.body;
+      const response = await this.adminUseCase.blockAmenity(id, status);
+      res.status(200).json(response);
     } catch (error) {
       console.log(error);
     }

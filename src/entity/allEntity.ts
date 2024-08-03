@@ -6,6 +6,12 @@ interface IPremiumSubscription {
   expiryDate?: Date;
 }
 
+export interface IAmenities extends Document {
+  name: string;
+  isBlocked: boolean;
+  createdAt: Date;
+}
+
 export default interface IUser extends Document {
   _id:string
   name: string;

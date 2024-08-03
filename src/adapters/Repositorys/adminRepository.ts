@@ -1,18 +1,22 @@
 import { Model } from "mongoose";
-import IUser, { IAdmin, ICategory, ISeller } from "../../entity/allEntity";
+import IUser, { IAdmin, IAmenities, ICategory, IProperty, ISeller } from "../../entity/allEntity";
 import IadminRepository from "../../Interfaces/Repository/adminRepository";
 
 export default class adminRepository implements IadminRepository {
   private admin: Model<IAdmin>;
   private user: Model<IUser>;
   private seller: Model<ISeller>;
-  private category : Model<ICategory>
+  private category: Model<ICategory>;
+  private property: Model<IProperty>;
+  private amenities: Model<IAmenities>;
 
-  constructor(admin: Model<IAdmin>, user: Model<IUser>,seller: Model<ISeller>,category:Model<ICategory>) {
+  constructor(admin: Model<IAdmin>, user: Model<IUser>, seller: Model<ISeller>, category: Model<ICategory>, property: Model<IProperty>, amenities: Model<IAmenities>) {
     this.admin = admin;
     this.user = user;
-    this.seller = seller
-    this.category = category
+    this.seller = seller;
+    this.category = category;
+    this.amenities = amenities;
+    this.property = property;
   }
 
   async checkEmailExists(email: string) {
@@ -54,7 +58,6 @@ export default class adminRepository implements IadminRepository {
     }
   }
 
-
   async getSeller() {
     try {
       return await this.seller.find();
@@ -67,8 +70,8 @@ export default class adminRepository implements IadminRepository {
     try {
       return await this.category.find();
     } catch (error) {
-      throw new Error("Failed to get Sellers");
-    } 
+      throw new Error("Failed to get Categories");
+    }
   }
 
   async blockOrUnBlockCategory(id: string, status: boolean) {
@@ -83,24 +86,84 @@ export default class adminRepository implements IadminRepository {
     }
   }
 
-  async addCategory(name:string,description:string){
-    try {       
+  async addCategory(name: string, description: string) {
+    try {
       const category = new this.category({
         name,
-        description:description
-      })
-      return await category.save()
+        description
+      });
+      return await category.save();
     } catch (error) {
-      throw new Error("Failed to add Category")
+      throw new Error("Failed to add Category");
     }
   }
 
-  async editCategory(id:string,name:string,description:string){
-    try {       
-      return await this.category.findByIdAndUpdate({_id:id},{$set:{name:name,description:description}},{new:true})
+  async editCategory(id: string, name: string, description: string) {
+    try {
+      return await this.category.findByIdAndUpdate(
+        { _id: id },
+        { $set: { name, description } },
+        { new: true }
+      );
     } catch (error) {
       console.log(error);
-      return null
+      return null;
     }
   }
+
+  async blockProperty(id: string, status: boolean) {
+    try {
+      return await this.property.findOneAndUpdate(
+        { _id: id },
+        { $set: { propertyStatus: !status } }
+      );
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  }
+
+  async getAllAmenities(): Promise<IAmenities[] | []> {
+    try {
+      return await this.amenities.find();
+    } catch (error) {
+      console.log(error);
+      return [];
+    }
+  }
+
+  async addAmenity(name: string) {
+    try {
+      const amenity = new this.amenities({ name });
+      return await amenity.save();
+    } catch (error) {
+      throw new Error("Failed to add Amenity");
+    }
+  }
+
+  async editAmenity(id: string, name: string) {
+    try {
+      return await this.amenities.findByIdAndUpdate(
+        { _id: id },
+        { $set: { name } },
+        { new: true }
+      );
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  }
+
+  async blockAmenity(id: string, status: boolean) {
+    try {
+      return await this.amenities.findOneAndUpdate(
+        { _id: id },
+        { $set: { isBlocked: !status } }
+      );
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  }
+
 }

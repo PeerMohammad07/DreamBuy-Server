@@ -1,4 +1,4 @@
-import { ICategory } from "../../entity/allEntity"
+import { IAmenities, ICategory } from "../../entity/allEntity"
 
 export interface returnData{
   message:string,
@@ -15,4 +15,9 @@ export interface IadminUseCase {
   blockCategory(id:string,status:boolean):Promise<string|null>
   addCategory(name:string,description:string):Promise<ICategory|void>
   editCategory(id:string,name:string,description:string):Promise<ICategory|null>
+  blockProperty(id: string, status: boolean):Promise<string|null>
+  getAmenities():void
+  addAmenity(name: string):Promise<IAmenities|void>
+  editAmenity(id: string, name: string):Promise<IAmenities|null>
+  blockAmenity(id: string, status: boolean):Promise<string|null>
 }

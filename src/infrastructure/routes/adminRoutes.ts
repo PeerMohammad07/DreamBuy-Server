@@ -9,27 +9,53 @@ import UserModel from "../db/userSchema";
 import adminAuth from "../middlewares/adminAuth";
 import Seller from "../db/sellerSchema";
 import categoryModal from "../db/categorySchema";
+import property from "../db/propertySchema";
+import amenitiesModal from "../db/amenitiesSchema";
 
 const adminRouter: Router = express.Router();
 
-const AdminRepository = new adminRepository(adminSchema, UserModel,Seller,categoryModal);
+const AdminRepository = new adminRepository(
+  adminSchema, 
+  UserModel, 
+  Seller, 
+  categoryModal, 
+  property, 
+  amenitiesModal
+);
 const JwtService = new JwtToken();
-const hashingService = new HashingService();
-const AdminUseCase = new adminUseCase(
+const HashingServiceInstance = new HashingService();
+const AdminUseCaseInstance = new adminUseCase(
   AdminRepository,
-  hashingService,
+  HashingServiceInstance,
   JwtService
 );
-const AdminController = new adminController(AdminUseCase);
+const AdminController = new adminController(AdminUseCaseInstance);
 
+// Admin Authentication Routes
 adminRouter.post("/login", AdminController.login);
-adminRouter.post("/logout", AdminController.logout);
+adminRouter.post("/logout", adminAuth, AdminController.logout);
+
+// User Management Routes
 adminRouter.get("/getUsers", adminAuth, AdminController.getUsers);
-adminRouter.get("/getSellers",adminAuth ,AdminController.getSeller);
-adminRouter.put("/blockUser",adminAuth ,AdminController.blockUser);
-adminRouter.get("/getCategory",adminAuth ,AdminController.getCategory)
-adminRouter.put("/blockCategory",adminAuth ,AdminController.blockCategory)
-adminRouter.post("/addCategory",adminAuth,AdminController.addCategory)
-adminRouter.put("/editCategory",adminAuth,AdminController.editCategory)
+adminRouter.put("/blockUser", adminAuth, AdminController.blockUser);
+
+// Seller Management Routes
+adminRouter.get("/getSellers", adminAuth, AdminController.getSeller);
+
+// Category Management Routes
+adminRouter.get("/getCategory", adminAuth, AdminController.getCategory);
+adminRouter.post("/addCategory", adminAuth, AdminController.addCategory);
+adminRouter.put("/editCategory", adminAuth, AdminController.editCategory);
+adminRouter.put("/blockCategory", adminAuth, AdminController.blockCategory);
+
+// Property Management Routes
+adminRouter.put('/blockProperty', adminAuth, AdminController.blockProperty);
+
+// Amenities Management Routes
+adminRouter.route('/amenities')
+  .get(adminAuth, AdminController.getAmenities)
+  .post(adminAuth, AdminController.addAmenity)
+  .put(adminAuth, AdminController.editAmenity);
+adminRouter.put('/amenityBlock',AdminController.blockAmenity)
 
 export default adminRouter;

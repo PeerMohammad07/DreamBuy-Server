@@ -222,7 +222,7 @@ export default class userController implements IUserController {
     };
     const response = await this.userUseCase.googleLogin(data);
 
-    if (response?.status&&response?.message == "google Login succesfull") {
+    if(response?.status&&response?.message == "google Login succesfull") {
       const { token,refreshToken } = response;
       res.cookie("userToken", token, {
         httpOnly: true,
@@ -231,9 +231,9 @@ export default class userController implements IUserController {
         httpOnly:true,
         maxAge:30 * 24 * 60 * 60 * 1000
       })
-      res.status(200).json(response);
+      return res.status(200).json(response);
     }else{
-      res.status(403).json(response)
+      return res.status(403).json(response)
     }
   }
 

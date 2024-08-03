@@ -1,4 +1,4 @@
-import IUser, { IAdmin, ICategory, ISeller } from "../../entity/allEntity";
+import IUser, { IAdmin, IAmenities, ICategory, IProperty, ISeller } from "../../entity/allEntity";
 
 export default interface IadminRepository {
   checkEmailExists(email:string):Promise<IAdmin|null>
@@ -10,4 +10,9 @@ export default interface IadminRepository {
   blockOrUnBlockCategory(id: string, status: boolean):Promise<ICategory|null>
   addCategory(name:string,description:string):Promise<ICategory|void>
   editCategory(id:string,name:string,description:string):Promise<ICategory|null>
+  blockProperty(id:string,status:boolean):Promise<IProperty|null>
+  getAllAmenities():Promise<IAmenities[] | []>
+  addAmenity(name: string):Promise<IAmenities|void>
+  editAmenity(id: string, name: string):Promise<IAmenities|null>
+  blockAmenity(id: string, status: boolean):Promise<IAmenities|null>
 }

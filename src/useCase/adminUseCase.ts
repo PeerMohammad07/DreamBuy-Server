@@ -42,7 +42,7 @@ export default class adminUseCase implements IadminUseCase {
 
       let token = this.jwtService.generateToken(payload);
       const adminRefreshToken = this.jwtService.generateRefreshToken(payload)
-      return { message: "Login succesfully", token,adminRefreshToken};
+      return { message: "Login succesfully", token, adminRefreshToken };
     } catch (error) {
       console.log(error);
     }
@@ -59,10 +59,7 @@ export default class adminUseCase implements IadminUseCase {
 
   async blockUser(id: string, status: boolean) {
     try {
-      const response = await this.adminRepository.blockOrUnBlockUser(
-        id,
-        status
-      );
+      const response = await this.adminRepository.blockOrUnBlockUser(id, status);
       if (response?.isBlocked) {
         return "unblocked successfully";
       } else {
@@ -73,7 +70,6 @@ export default class adminUseCase implements IadminUseCase {
       return null;
     }
   }
-
 
   async getSeller() {
     try {
@@ -93,12 +89,9 @@ export default class adminUseCase implements IadminUseCase {
     }
   }
 
-  async blockCategory(id: string, status: boolean){
+  async blockCategory(id: string, status: boolean) {
     try {
-      const response = await this.adminRepository.blockOrUnBlockCategory(
-        id,
-        status
-      );
+      const response = await this.adminRepository.blockOrUnBlockCategory(id, status);
       if (response?.isBlocked) {
         return "unblocked successfully";
       } else {
@@ -110,20 +103,75 @@ export default class adminUseCase implements IadminUseCase {
     }
   }
 
-  async addCategory(name:string,description:string){
+  async addCategory(name: string, description: string) {
     try {
-      return await this.adminRepository.addCategory(name,description)
+      return await this.adminRepository.addCategory(name, description);
     } catch (error) {
       console.log(error);
     }
   }
 
-  async editCategory(id:string,name:string,description:string){
+  async editCategory(id: string, name: string, description: string) {
     try {
-      return this.adminRepository.editCategory(id,name,description)
+      return await this.adminRepository.editCategory(id, name, description);
     } catch (error) {
       console.log(error);
-      return null
+      return null;
     }
   }
+
+  async blockProperty(id: string, status: boolean) {
+    try {
+      const response = await this.adminRepository.blockProperty(id, status);
+      if (response?.propertyStatus) {
+        return "unblocked successfully";
+      } else {
+        return "blocked successfully";
+      }
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  }
+
+  async getAmenities() {
+    try {
+      return await this.adminRepository.getAllAmenities();
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  }
+
+  async addAmenity(name: string) {
+    try {
+      return await this.adminRepository.addAmenity(name);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async editAmenity(id: string, name: string) {
+    try {
+      return await this.adminRepository.editAmenity(id, name);
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  }
+
+  async blockAmenity(id: string, status: boolean) {
+    try {
+      const response = await this.adminRepository.blockAmenity(id, status);
+      if (response?.isBlocked) {
+        return "unblocked successfully";
+      } else {
+        return "blocked successfully";
+      }
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  }
+
 }
