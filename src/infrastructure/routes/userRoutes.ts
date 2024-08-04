@@ -19,13 +19,14 @@ import OtpService from "../utils/otpService";
 import JwtToken from "../utils/jwtService";
 import property from "../db/propertySchema";
 import userAuth from "../middlewares/userAuth";
+import Seller from "../db/sellerSchema";
 
 const userRouter: Router = express.Router();
 
 const jwtService = new JwtToken();
 const hashingService = new HashingService();
 const otpService = new OtpService();
-const UserRepository = new userRepository(Users, OtpSchema, property);
+const UserRepository = new userRepository(Users, OtpSchema, property,Seller);
 const UserUseCase = new userUseCase(
   UserRepository,
   hashingService,
@@ -53,5 +54,7 @@ userRouter.put('/updateUser', UserController.updateUser)
 
 userRouter.patch('/getPremium',userAuth,UserController.getPremium)
 userRouter.patch('/updatePremium',userAuth,UserController.updatePremium)
+
+userRouter.post('/sendOwnerDetail',userAuth,UserController.sendOwnerDetail)
 
 export default userRouter;

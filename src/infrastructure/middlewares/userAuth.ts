@@ -4,9 +4,10 @@ import userRepository from "../../adapters/Repositorys/userRepository";
 import UserModel from "../db/userSchema";
 import OtpModel from "../db/otpSchema";
 import property from "../db/propertySchema";
+import Seller from "../db/sellerSchema";
 
 const jwtService = new JwtToken()
-const userRepo = new userRepository(UserModel, OtpModel, property)
+const userRepo = new userRepository(UserModel, OtpModel, property,Seller)
 
 interface IAuthRequest extends Request {
   userId?: string;

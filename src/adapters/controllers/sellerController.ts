@@ -276,6 +276,8 @@ export default class SellerController implements ISellerController {
         sellerId,
         sqft
       };
+      console.log(features);
+      
       const response = await this.sellerUseCase.addProperty(sellerId, data);
       res.status(200).json(response);
     } catch (error) {

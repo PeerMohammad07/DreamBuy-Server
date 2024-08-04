@@ -66,4 +66,5 @@ export default interface IuserUseCase{
   getPremium(data:any):Promise<null>
   updatePremium(id:string,type:string):Promise<IUser|null>
   productDetail(id:string):Promise<returnMessage|null>
+  sendOwnerDetail(sellerId:string,email:string,name:string,property:IProperty):Promise<returnMessage|null>
 }

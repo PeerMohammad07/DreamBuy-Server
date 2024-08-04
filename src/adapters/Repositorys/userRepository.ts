@@ -11,16 +11,18 @@ export default class userRepository implements IuserRepository {
   private user: Model<IUser>;
   private otp: Model<IOtp>;
   private property: Model<IProperty>;
-  
+  private seller : Model<ISeller>
 
   constructor(
     user: Model<IUser>,
     otp: Model<IOtp>,
-    property: Model<IProperty>
+    property: Model<IProperty>,
+    seller : Model<ISeller>
   ) {
     this.user = user;
     this.otp = otp;
     this.property = property;
+    this.seller = seller
   }
 
   async checkEmailExists(email: string) {
@@ -36,6 +38,15 @@ export default class userRepository implements IuserRepository {
       return await this.user.findOne({ _id: id });
     } catch (error) {
       throw new Error("Failed to check the email exists");
+    }
+  }
+
+  async checkSellerExists(id: string) {
+    try {
+      return await this.seller.findOne({ _id: id });
+    } catch (error) {
+      console.log(error);
+      return null;
     }
   }
 

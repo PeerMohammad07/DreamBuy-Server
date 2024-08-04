@@ -47,6 +47,7 @@ export default class SellerRepository implements ISellerRepository {
         email: data.email,
         phone: data.phone,
         password: data.password,
+        image : data.image,
       });
       await seller.save();
     } catch (error) {

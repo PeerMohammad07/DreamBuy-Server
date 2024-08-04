@@ -10,6 +10,8 @@ import IotpService from "../Interfaces/Utils/otpService";
 import IjwtService from "../Interfaces/Utils/jwtServices";
 import { randomImageName, sharpImage } from "../infrastructure/utils/sharpImage";
 import { createImageUrl, sendObjectToS3 } from "../infrastructure/utils/s3Bucket";
+import sendEmailOwnerDetails from "../infrastructure/utils/sendSellerDetails";
+import { IProperty } from "../entity/allEntity";
 
 export default class userUseCase implements IuserUseCase {
   private userRepository: IuserRepository;
@@ -369,6 +371,20 @@ export default class userUseCase implements IuserUseCase {
       } else {
         return { message: "something went wrong", status: false }
       }
+    } catch (error) {
+      console.log(error);
+      return null
+    }
+  }
+
+  async sendOwnerDetail(sellerId:string,email:string,name:string,property:IProperty){
+    try {
+      const seller = await this.userRepository.checkSellerExists(sellerId)
+      if(!seller){
+        return {status:false,message : "seller doesnt exist with this id"}
+      }      
+       await sendEmailOwnerDetails(email,name,seller,property)
+      return {status:true,message : "Email sended succesfully"}
     } catch (error) {
       console.log(error);
       return null

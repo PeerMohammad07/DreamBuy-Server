@@ -29,10 +29,12 @@ export interface ISeller extends Document {
   name:string
   email:string
   password:string
+  phone:number
   isBlocked:boolean
   otpVerified:boolean
   image?:string
-  verficationImage:string,
+  verficationImage:string
+  verificationImageUrl:string,
   kycVerified:string
 }
 
@@ -58,6 +60,11 @@ export interface IToken extends Document {
   email : string
 }
 
+interface location {
+  location : string
+  latitude:number
+  longitude:number
+}
 
 export interface IProperty extends Document {
   _id : string
@@ -72,8 +79,8 @@ export interface IProperty extends Document {
   bedroom: string;
   bathroom: number;
   description: string;
-  location: string;
-  price: number;
+  location: location;
+  Price: number;
   propertyImage: string[];
   sqft: number;
 }

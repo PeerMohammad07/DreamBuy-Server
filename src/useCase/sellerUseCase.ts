@@ -20,6 +20,7 @@ export interface IregisterData {
   email: string;
   phone: number;
   password: string;
+  image ? : string
 }
 
 export default class SellerUseCase implements ISellerUsecase {
@@ -52,7 +53,7 @@ export default class SellerUseCase implements ISellerUsecase {
       }
       const bycryptPassword = await this.hashingService.hashing(data.password);
       data.password = bycryptPassword;
-
+      data.image = "https://avatar.iran.liara.run/public/boy"
       await this.sellerRepository.createSeller(data);
 
       const otp = await this.otpService.generateOtp();

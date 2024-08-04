@@ -42,7 +42,7 @@ const sendEmailPremiumExpiration = async (to: string, name: string, expiryDate: 
           button: {
             color: '#22BC66',
             text: 'Renew Subscription',
-            link: process.env.CLIENT_SIDE_URL||'http://localhost:5000',
+            link: process.env.CLIENT_SIDE_URL || 'http://localhost:5000',
           },
         },
         outro: 'If you have any questions, feel free to contact us.',
@@ -64,5 +64,6 @@ const sendEmailPremiumExpiration = async (to: string, name: string, expiryDate: 
     console.error('Error sending premium expiration email:', error);
   }
 };
+
 
 export default sendEmailPremiumExpiration;

@@ -28,6 +28,7 @@ export default class userController implements IUserController {
     this.getPremium = this.getPremium.bind(this)
     this.updatePremium = this.updatePremium.bind(this)
     this.productDetail = this.productDetail.bind(this)
+    this.sendOwnerDetail = this.sendOwnerDetail.bind(this)
   }
 
   async register(
@@ -139,7 +140,7 @@ export default class userController implements IUserController {
           httpOnly: true,
           maxAge: 30 * 24 * 60 * 60 * 1000,
         })
-        res.status(200).json({ status: true, message: "Login Succesfully",user:response.user });
+        res.status(200).json({ status: true, message: "Login Succesfully", user: response.user });
       } else if (
         !response?.status &&
         response?.message == "otp is not verified"
@@ -183,17 +184,17 @@ export default class userController implements IUserController {
   }
 
   async googleRegister(req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>,
-    res: Response<any, Record<string, any>>){
+    res: Response<any, Record<string, any>>) {
     try {
       const { name, email, image } = req.body;
-    const data = {
-      name,
-      email,
-      image,
-    };
-    const response = await this.userUseCase.googleRegister(data)
-    if(response?.status){
-      const { token, refreshToken } = response;
+      const data = {
+        name,
+        email,
+        image,
+      };
+      const response = await this.userUseCase.googleRegister(data)
+      if (response?.status) {
+        const { token, refreshToken } = response;
         res.cookie("userToken", token, {
           httpOnly: true,
           maxAge: 360000,
@@ -201,12 +202,12 @@ export default class userController implements IUserController {
           httpOnly: true,
           maxAge: 30 * 24 * 60 * 60 * 1000,
         })
-      res.status(200).json(response)
-    }else{
-      res.status(403).json(response)
-    }
+        res.status(200).json(response)
+      } else {
+        res.status(403).json(response)
+      }
     } catch (error) {
-      
+
     }
   }
 
@@ -222,17 +223,17 @@ export default class userController implements IUserController {
     };
     const response = await this.userUseCase.googleLogin(data);
 
-    if(response?.status&&response?.message == "google Login succesfull") {
-      const { token,refreshToken } = response;
+    if (response?.status && response?.message == "google Login succesfull") {
+      const { token, refreshToken } = response;
       res.cookie("userToken", token, {
         httpOnly: true,
         maxAge: 360000,
-      }).cookie("userRefreshToken",refreshToken,{
-        httpOnly:true,
-        maxAge:30 * 24 * 60 * 60 * 1000
+      }).cookie("userRefreshToken", refreshToken, {
+        httpOnly: true,
+        maxAge: 30 * 24 * 60 * 60 * 1000
       })
       return res.status(200).json(response);
-    }else{
+    } else {
       return res.status(403).json(response)
     }
   }
@@ -309,33 +310,33 @@ export default class userController implements IUserController {
   }
 
   async updateUser(req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>,
-    res: Response<any, Record<string, any>>){
-      try {
-        const {name,image,id,type} = req.body
-        const response = await this.userUseCase.updateUser(id,name,image,type)
-        res.status(200).json(response)
-      } catch (error) {
-        console.log(error);
-      }
+    res: Response<any, Record<string, any>>) {
+    try {
+      const { name, image, id, type } = req.body
+      const response = await this.userUseCase.updateUser(id, name, image, type)
+      res.status(200).json(response)
+    } catch (error) {
+      console.log(error);
+    }
   }
 
 
   async getPremium(req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>,
-    res: Response<any, Record<string, any>>){
-    try {      
-      const {data} = req.body
+    res: Response<any, Record<string, any>>) {
+    try {
+      const { data } = req.body
       const session = await this.userUseCase.getPremium(data)
-      res.status(200).json({ session })      
+      res.status(200).json({ session })
     } catch (error) {
       console.log(error);
     }
   }
 
   async updatePremium(req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>,
-    res: Response<any, Record<string, any>>){
+    res: Response<any, Record<string, any>>) {
     try {
-      const {type,id} = req.body
-      const response = await this.userUseCase.updatePremium(id,type)      
+      const { type, id } = req.body
+      const response = await this.userUseCase.updatePremium(id, type)
       res.status(200).json(response)
     } catch (error) {
       console.log(error);
@@ -343,10 +344,21 @@ export default class userController implements IUserController {
   }
 
   async productDetail(req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>,
-    res: Response<any, Record<string, any>>){
+    res: Response<any, Record<string, any>>) {
     try {
-      const {id} = req.body
-      const response  = await this.userUseCase.productDetail(id)
+      const { id } = req.body
+      const response = await this.userUseCase.productDetail(id)
+      res.status(200).json(response)
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async sendOwnerDetail(req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>,
+    res: Response<any, Record<string, any>>) {
+    try {
+      const { sellerId,email, userName ,PropertyDetails} = req.body      
+      const response = await this.userUseCase.sendOwnerDetail(sellerId,email,userName,PropertyDetails)
       res.status(200).json(response)
     } catch (error) {
       console.log(error);
