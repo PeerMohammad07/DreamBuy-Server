@@ -1,4 +1,3 @@
-import { ISeller } from "../entity/allEntity";
 import {
   createImageUrl,
   sendObjectToS3,

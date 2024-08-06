@@ -262,6 +262,15 @@ export default class userUseCase implements IuserUseCase {
     } catch (error) { }
   }
 
+  async getUsers(id:string){
+    try {
+      return await this.userRepository.getUser(id)
+    } catch (error) {
+      console.log(error);
+      return null
+    } 
+  }
+
   async getRentProperty() {
     try {
       const response = await this.userRepository.getRentProperty();

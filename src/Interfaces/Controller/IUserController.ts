@@ -42,5 +42,9 @@ export interface IUserController {
     res: Response<any, Record<string, any>>
   ): void;
   googleRegister(req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>,
-    res: Response<any, Record<string, any>>):void
+    res: Response<any, Record<string, any>>): void
+  getUser(
+    req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>,
+    res: Response<any, Record<string, any>>
+  ): void
 }

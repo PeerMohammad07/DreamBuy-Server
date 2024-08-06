@@ -31,4 +31,5 @@ export default interface IuserRepository{
   updatePremium(id:string,newSubscription:IPremiumSubscription): Promise<IUser | null>
   productDetail(id:string):Promise<IProperty|null>
   checkSellerExists(id: string):Promise<ISeller|null>
+  getUser(id:string):Promise<IUser|null>
 }

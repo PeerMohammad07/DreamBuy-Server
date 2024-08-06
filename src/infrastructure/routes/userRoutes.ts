@@ -47,6 +47,8 @@ userRouter.post("/forgotPassword", UserController.forgotPassword);
 userRouter.post("/resetPassword", UserController.resetPassword);
 userRouter.post('/productDetail',UserController.productDetail)
 
+userRouter.get('/getUser',UserController.getUser)
+
 userRouter.get("/getRentProperty", UserController.getRentProperty);
 userRouter.get("/getSaleProperty", UserController.getSaleProperty);
 

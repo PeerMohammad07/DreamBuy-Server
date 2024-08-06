@@ -1,4 +1,4 @@
-import { Document } from "mongoose";
+import { Document, ObjectId } from "mongoose";
 
 interface IPremiumSubscription {
   subscriptionType?: 'weekly' | 'monthly' | 'three_months';
@@ -93,3 +93,22 @@ export interface ICategory extends Document {
   isBlocked : boolean
   createdAt : Date
 }
+
+export interface IConversation extends Document {
+  _id:string,
+  senderId : ObjectId
+  receiverId :ObjectId
+  createdAt : true
+  updatedAt : true
+}
+
+export interface IMessage extends Document {
+  _id:string,
+  senderId : ObjectId
+  conversationId : string
+  message :string
+  createdAt? : true
+  updatedAt?: true
+}
+
+

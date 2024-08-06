@@ -69,6 +69,15 @@ export default class userRepository implements IuserRepository {
     }
   }
 
+  async getUser(id:string){
+    try {
+      return await this.user.findOne({_id:id})
+    } catch (error) {
+      throw Error
+    }
+  }
+
+
   async verifyOtp(email: string) {
     try {
       return await this.otp.findOne({ email });

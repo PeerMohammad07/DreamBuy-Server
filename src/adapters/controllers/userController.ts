@@ -29,6 +29,7 @@ export default class userController implements IUserController {
     this.updatePremium = this.updatePremium.bind(this)
     this.productDetail = this.productDetail.bind(this)
     this.sendOwnerDetail = this.sendOwnerDetail.bind(this)
+    this.getUser = this.getUser.bind(this)
   }
 
   async register(
@@ -284,6 +285,23 @@ export default class userController implements IUserController {
       console.log(error);
     }
   }
+
+  async getUser(
+    req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>,
+    res: Response<any, Record<string, any>>
+  ) {
+    try {
+      const id = req.query.id
+      if (typeof id !== 'string') {
+        return res.status(400).json({ message: "Invalid ID format" });
+      }
+      const getUsers = await this.userUseCase.getUsers(id)
+      res.status(200).json(getUsers);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
 
   async getRentProperty(
     req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>,

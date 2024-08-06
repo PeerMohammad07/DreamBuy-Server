@@ -8,6 +8,7 @@ import sellerRouter from "../routes/sellerRoutes";
 import adminRouter from "../routes/adminRoutes";
 import job from "../utils/cronJob";
 import amenitiesModal from "../db/amenitiesSchema";
+import chatRouter from "../routes/chatRoutes";
 
 const app = express();
 
@@ -36,6 +37,7 @@ app.use(express.urlencoded({ extended: true, limit: "20mb" }));
 app.use("/api", userRouter);
 app.use("/api/seller", sellerRouter);
 app.use("/api/admin", adminRouter);
+app.use("/api/chat",chatRouter)
 
 job.start()
 
