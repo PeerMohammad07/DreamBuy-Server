@@ -17,4 +17,6 @@ export default interface ISellerRepository {
   blockSeller(id:string,status:boolean):Promise<ISeller|null>
   addProperty(data:Property):Promise<IProperty|null>
   updateSeller(sellerId:string,name:string,phone:string):Promise<ISeller|null>
+  getMyProperty(id:string):Promise<IProperty[]|null>
+  deletePropety(id:string):Promise<IProperty|null>
 }

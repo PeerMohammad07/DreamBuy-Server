@@ -29,7 +29,6 @@ export default class chatRepository implements IChatRepository{
         senderId
       })
       await newMessage.save()
-      console.log(newMessage)
       return newMessage
     } catch (error) {
       console.log(error);
@@ -39,7 +38,13 @@ export default class chatRepository implements IChatRepository{
 
   async getSingleConversation(senderId:string,receiverId:string){
     try {
-      return await this.conversation.findOne({senderId:senderId,receiverId:receiverId})
+      const conversation = await this.conversation.findOne({
+        $or: [
+          { senderId: senderId, receiverId: receiverId },
+          { senderId: receiverId, receiverId: senderId }
+        ]
+      });
+      return conversation
     } catch (error) {
       console.log(error);
       throw Error 
@@ -62,7 +67,11 @@ export default class chatRepository implements IChatRepository{
 
   async getMessages(conversationId:string){
     try {
-      return await this.message.find({conversationId})
+      return await this.message.find({conversationId}).populate({
+        path: 'conversationId',
+        select: 'senderId receiverId',
+        populate: ['senderId', 'receiverId'] 
+      });
     } catch (error) {
       console.log(error);
       throw Error 

@@ -19,11 +19,25 @@ export default class chatUseCase implements IchatUseCase{
 
   async sendMessage(senderId:string,message:string,recieverId:string){
     try {
-      let conversation = await this.chatRepository.getSingleConversation(senderId,recieverId)
+      let conversation = await this.chatRepository.getSingleConversation(senderId,recieverId) 
       if(!conversation){
         conversation = await this.chatRepository.createConversation(senderId,recieverId)
       }
       return await this.chatRepository.storeMessage(senderId,message,conversation._id)
+    } catch (error) {
+      console.log(error);
+      throw Error
+    }
+  }
+
+  async createConversation(senderId:string,recieverId:string){
+    try {
+      const alreadyConversation = await this.chatRepository.getSingleConversation(senderId,recieverId)
+      if(alreadyConversation){
+        return {status:false,message:"Already have conversation"}
+      }
+      const conversation = await this.chatRepository.createConversation(senderId,recieverId)
+      return {status:true,message:"conversation created successfully",data:conversation}
     } catch (error) {
       console.log(error);
       throw Error

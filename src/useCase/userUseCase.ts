@@ -262,9 +262,13 @@ export default class userUseCase implements IuserUseCase {
     } catch (error) { }
   }
 
-  async getUsers(id:string){
+  async getUsers(id:string,role:string){
     try {
-      return await this.userRepository.getUser(id)
+      if(role=='user'){        
+        return await this.userRepository.getSeller(id)
+      }else{
+        return await this.userRepository.getUser(id)
+      }
     } catch (error) {
       console.log(error);
       return null

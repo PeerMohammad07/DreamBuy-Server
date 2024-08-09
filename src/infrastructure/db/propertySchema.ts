@@ -73,7 +73,7 @@ const propertySchema = new Schema({
     type: String,
     requried: true,
   },
-});
+},{timestamps:true});
 
 
 const property = mongoose.model<IProperty>('Property',propertySchema)

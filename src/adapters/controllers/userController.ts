@@ -6,6 +6,7 @@ import IuserUseCase from "../../Interfaces/UseCase/IuserUseCase";
 import { Request, Response } from "express";
 import { ParamsDictionary } from "express-serve-static-core";
 import { ParsedQs } from "qs";
+import { avatarImage } from "../../infrastructure/utils/avatarImae";
 
 export default class userController implements IUserController {
   private userUseCase: IuserUseCase;
@@ -45,10 +46,14 @@ export default class userController implements IUserController {
         });
       }
 
+      const randNumber =  Math.floor(Math.random() * (10 - 1 + 1)) + 1;
+      const randomImage = avatarImage(randNumber)
+
       const data = {
         name,
         email,
         password,
+        image:randomImage,
       };
 
       const response = await this.userUseCase.register(data);
@@ -292,10 +297,11 @@ export default class userController implements IUserController {
   ) {
     try {
       const id = req.query.id
-      if (typeof id !== 'string') {
+      const role = req.query.role
+      if (typeof id !== 'string'||typeof role !== 'string') {
         return res.status(400).json({ message: "Invalid ID format" });
       }
-      const getUsers = await this.userUseCase.getUsers(id)
+      const getUsers = await this.userUseCase.getUsers(id,role)
       res.status(200).json(getUsers);
     } catch (error) {
       console.log(error);

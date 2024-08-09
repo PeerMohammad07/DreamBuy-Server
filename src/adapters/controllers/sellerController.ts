@@ -21,6 +21,8 @@ export default class SellerController implements ISellerController {
     this.addProperty = this.addProperty.bind(this);
     this.changePassword = this.changePassword.bind(this)
     this.updateSeller = this.updateSeller.bind(this)
+    this.getMyProperty = this.getMyProperty.bind(this)
+    this.deleteProeprty = this.deleteProeprty.bind(this)
   }
 
   async register(
@@ -310,5 +312,27 @@ export default class SellerController implements ISellerController {
     } catch (error) {
       console.log(error);
     }
+  }
+
+  async getMyProperty(req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>,
+    res: Response<any, Record<string, any>>){
+      try {
+        const id = req.params.id
+        const response = await this.sellerUseCase.getMyProperty(id)
+        res.status(200).json(response)
+      } catch (error) {
+        console.log(error);
+      }
+  }
+
+  async deleteProeprty(req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>,
+    res: Response<any, Record<string, any>>){
+      try {
+        const {id} = req.body
+        const response = await this.sellerUseCase.deleteProperty(id)
+        res.status(200).json(response)
+      } catch (error) {
+        console.log(error);
+      }
   }
 }

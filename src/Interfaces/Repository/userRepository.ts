@@ -32,4 +32,5 @@ export default interface IuserRepository{
   productDetail(id:string):Promise<IProperty|null>
   checkSellerExists(id: string):Promise<ISeller|null>
   getUser(id:string):Promise<IUser|null>
+  getSeller(id:string):Promise<ISeller|null>
 }

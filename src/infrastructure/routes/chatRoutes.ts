@@ -12,8 +12,10 @@ const ChatRepositoty = new chatRepository(conversationModal,messageModal)
 const ChatUseCase = new chatUseCase(ChatRepositoty)
 const ChatController = new chatController(ChatUseCase)
 
+
 chatRouter.get('/getConversations',ChatController.getConversations)
 chatRouter.post('/sendMessage',ChatController.sendMessage)
 chatRouter.get('/getMessages',ChatController.getMessage)
+chatRouter.post('/createConversation',ChatController.createConversation)
 
 export default chatRouter

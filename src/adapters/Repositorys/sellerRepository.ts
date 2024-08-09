@@ -177,4 +177,21 @@ export default class SellerRepository implements ISellerRepository {
     }
   }
 
+  async getMyProperty(id:string){
+    try {
+      return await this.property.find({sellerId:id})
+    } catch (error) {
+      console.log(error);
+      return null
+    }
+  }
+
+  async deletePropety(id:string){
+    try {
+      return await this.property.findByIdAndDelete({_id:id})
+    } catch (error) {
+      console.log(error);
+      return null
+    }
+  }
 }

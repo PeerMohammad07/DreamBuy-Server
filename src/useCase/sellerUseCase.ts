@@ -52,7 +52,8 @@ export default class SellerUseCase implements ISellerUsecase {
       }
       const bycryptPassword = await this.hashingService.hashing(data.password);
       data.password = bycryptPassword;
-      data.image = "https://avatar.iran.liara.run/public/boy"
+      const id = Math.floor(Math.random() * (800 - 1 + 1)) + 1;
+      data.image = `https://avatar.iran.liara.run/public/boy?id=${id}`
       await this.sellerRepository.createSeller(data);
 
       const otp = await this.otpService.generateOtp();
@@ -326,6 +327,28 @@ export default class SellerUseCase implements ISellerUsecase {
         return {status:true,message:"seller updated",seller:response}
       }
       return {status:false , message:"invalid seller Id"}
+    } catch (error) {
+      console.log(error);
+      return null
+    }
+  }
+
+  async getMyProperty(id:string){
+    try {
+      return this.sellerRepository.getMyProperty(id)
+    } catch (error) {
+      console.log(error);
+      return null
+    }
+  }
+
+  async deleteProperty(id:string){
+    try {
+      const response = await this.sellerRepository.deletePropety(id)
+      if(response){
+        return {message:"proeprty deleted successfully",status:true}
+      }
+        return {message:"proeprty deleted failed",status:false}
     } catch (error) {
       console.log(error);
       return null

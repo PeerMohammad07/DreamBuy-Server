@@ -43,6 +43,8 @@ sellerRouter.post("/blockSeller", sellerController.blockSeller);
 sellerRouter.post("/addProperty", sellerAuth, sellerController.addProperty);
 sellerRouter.post("/changePassword",sellerAuth,sellerController.changePassword)
 sellerRouter.post('/updateSeller',sellerAuth,sellerController.updateSeller)
+sellerRouter.post('/deleteProperty',sellerAuth,sellerController.deleteProeprty)
+sellerRouter.get("/getMyProperty/:id",sellerAuth,sellerController.getMyProperty)
 
 
 export default sellerRouter;

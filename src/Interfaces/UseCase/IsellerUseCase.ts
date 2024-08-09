@@ -1,4 +1,4 @@
-import { ISeller } from "../../entity/allEntity";
+import { IProperty, ISeller } from "../../entity/allEntity";
 import { IregisterData } from "../../useCase/sellerUseCase";
 
 export interface returnMessage {
@@ -63,4 +63,6 @@ export default interface ISellerUsecase {
   addProperty(id: string, data: PropertyData): Promise<string | null>
   changePassword(oldPassword:string,newPassword:string,sellerId:string):Promise<string|null>
   updateSeller(name:string,phone:string,sellerId:string):Promise<updateKycReturn|null>
+  getMyProperty(id:string):Promise<IProperty[]|null>
+  deleteProperty(id:string):Promise<returnMessage|null>
 }
