@@ -12,19 +12,23 @@ import { randomImageName, sharpImage } from "../infrastructure/utils/sharpImage"
 import { createImageUrl, sendObjectToS3 } from "../infrastructure/utils/s3Bucket";
 import sendEmailOwnerDetails from "../infrastructure/utils/sendSellerDetails";
 import { IProperty } from "../entity/allEntity";
+import { IPushNotificationRepository } from "../Interfaces/Repository/pushNotificatio";
 
 export default class userUseCase implements IuserUseCase {
   private userRepository: IuserRepository;
   private hashingService: IhashingService;
   private otpService: IotpService;
   private jwtService: IjwtService;
+  private notificationRepository :IPushNotificationRepository
 
   constructor(
     userRepository: IuserRepository,
     HashingService: IhashingService,
     otpService: IotpService,
-    jwtService: IjwtService
+    jwtService: IjwtService,
+    notificationRepository : IPushNotificationRepository
   ) {
+    this.notificationRepository = notificationRepository
     this.userRepository = userRepository;
     this.hashingService = HashingService;
     this.otpService = otpService;
@@ -400,6 +404,55 @@ export default class userUseCase implements IuserUseCase {
       return {status:true,message : "Email sended succesfully"}
     } catch (error) {
       console.log(error);
+      return null
+    }
+  }
+
+  async setBrowserToken(userId:string,token:string){
+    try {
+      await this.notificationRepository.updateToken(userId,token)
+      return {status:true,message: "usertoken updated"}
+    } catch (error) {
+      console.log(error);
+      return null
+    }
+  }
+
+  async addToWhishlist(userId:string,propertyId:string){
+    try {
+      const exist = await this.userRepository.whishlistPropertyExist(userId,propertyId)
+      if(exist){
+        return {status:true,message:"Already in the wishlist",data:exist}
+      }
+      const response = await this.userRepository.addToWhishlist(userId,propertyId)
+      if(response){
+        return {status:true,message:"Property added to whishlist",data:response}
+      }
+      return {status:false,message:"Failed to add wishlist"}
+    } catch (error) {
+      console.log(error)
+      return null
+    }
+  }
+
+  async removeFromWhishlist(userId:string,propertyId:string){
+    try {
+      const response =  await this.userRepository.removeFromWhishlist(userId,propertyId)
+      if(response.deletedCount>=1){
+        return {status:true,message:"Removed property from whishlist"}
+      }
+      return {status:false,message:"Failed to remove from whishilist"}
+    } catch (error) {
+      console.log(error)
+      return null
+    }
+  }
+
+  async getAllWhishlistProperty(userId:string){
+    try {
+      return await this.userRepository.getAllWhishlistProperty(userId)
+    } catch (error) {
+      console.log(error)
       return null
     }
   }

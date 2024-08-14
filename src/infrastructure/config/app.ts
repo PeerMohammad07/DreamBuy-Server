@@ -9,8 +9,12 @@ import adminRouter from "../routes/adminRoutes";
 import job from "../utils/cronJob";
 import amenitiesModal from "../db/amenitiesSchema";
 import chatRouter from "../routes/chatRoutes";
+import path from "path";
+import {EventEmitter} from "events";
 
 const app = express();
+
+EventEmitter.setMaxListeners(20)
 
 // config dotenv
 dotenv.config();
@@ -30,8 +34,9 @@ app.use(
 app.use(cookieParser());
 
 // Url encoding
-app.use(express.json({ limit: "20mb" }));
-app.use(express.urlencoded({ extended: true, limit: "20mb" }));
+app.use(express.json({ limit: "100mb" }));
+app.use(express.urlencoded({ extended: true, limit: "100mb" }));
+app.use(express.static(path.join(__dirname, "../public")));
 
 // Routes
 app.use("/api", userRouter);

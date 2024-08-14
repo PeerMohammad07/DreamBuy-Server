@@ -1,56 +1,53 @@
-import { Server,Socket } from "socket.io";
+import { Server, Socket } from "socket.io";
 
-interface socketUser {
-  id:string
-  socketId:string
+interface SocketUser {
+  id: string;
+  socketId: string;
 }
 
-export default function socketConnection(server:any){
+export default function socketConnection(server: any) {
+  let users: SocketUser[] = [];
 
-  let users:socketUser[] = []
-  const addUser = (id:string,socketId:string)=>{
-    !users.some(users=> users.id==id)&&users.push({id,socketId})
-  }
-
-  const removeUser = (socketId:string)=>{
-    users = users.filter(user=> user.socketId!=socketId)
-  }
-
-  const getUser = (id:string)=>{
-    for(let i=0;i<users.length;i++){
-      if(users[i].id==id){
-        return users[i]
-      }
+  const addUser = (id: string, socketId: string) => {
+    if (!users.some(user => user.id === id)) {
+      users.push({ id, socketId });
     }
-  }
+  };
 
+  const removeUser = (socketId: string) => {
+    users = users.filter(user => user.socketId !== socketId);
+  };
 
-  const io=new Server(server,{
-    cors:{
-        origin:"*", 
+  const getUser = (id: string) => {
+    return users.find(user => user.id === id);
+  };
+
+  const io = new Server(server, {
+    cors: {
+      origin: "*",
     },
-  })
+  });
 
-  io.on("connection",(socket:Socket)=>{
-    console.log("socket connected succesfully",socket.id)
+  io.on("connection", (socket: Socket) => {
+    console.log("Socket connected successfully", socket.id);
 
-    socket.on('addUser',(id)=>{
-      addUser(id,socket.id)
-      console.log(users,"user")
-    })
-    
-    socket.emit('getUser',users)
+    socket.on('addUser', (id: string) => {
+      addUser(id, socket.id);
+      io.emit('getUser', users); // Send updated users list to all clients
+    });
 
-    socket.on('message',(message,id)=>{
-      const user = getUser(id)
-      if(!user){return}
-      io.to(user.socketId).emit("messageContent",message)
-    })
+    socket.on('message', (message: any, id: string) => {
+      console.log("socket")
+      const user = getUser(id);
+      if (user) {
+        io.to(user.socketId).emit("messageContent", message);
+      }
+    });
 
-    socket.on("disconnect",()=>{
-      console.log("socket io disconnected")
-      removeUser(socket.id)
-      io.emit('removeUser',users)
-    })
-  })
+    socket.on("disconnect", () => {
+      console.log("Socket disconnected");
+      removeUser(socket.id);
+      io.emit('removeUser', users); // Send updated users list to all clients
+    });
+  });
 }

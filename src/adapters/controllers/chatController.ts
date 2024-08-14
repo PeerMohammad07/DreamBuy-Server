@@ -13,6 +13,7 @@ export default class chatController implements IChatController {
     this.sendMessage = this.sendMessage.bind(this);
     this.getMessage = this.getMessage.bind(this);
     this.createConversation = this.createConversation.bind(this)
+    this.uploadChatFile = this.uploadChatFile.bind(this)
   }
 
   async getConversations(
@@ -43,6 +44,26 @@ export default class chatController implements IChatController {
         message,
         recieverId
       );
+      res.status(200).json(response);
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  }
+
+  async uploadChatFile(
+    req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>,
+    res: Response<any, Record<string, any>>
+  ) {
+    try {
+      const files = req.files as Express.Multer.File[]
+      const { senderId, recieverId } = req.body;
+      const response = await this.chatUseCase.uploadChatFile(
+        senderId,
+        files,
+        recieverId
+      );
+      console.log(response,"respojnse sended i think so ")
       res.status(200).json(response);
     } catch (error) {
       console.log(error);

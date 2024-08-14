@@ -1,5 +1,5 @@
 import { Model } from "mongoose";
-import IUser, { IOtp, IProperty, ISeller, IToken } from "../../entity/allEntity";
+import IUser, { IOtp, IProperty, ISeller, IToken, IWhishlist } from "../../entity/allEntity";
 import IuserRepository, {
   IotpData,
   IPremiumSubscription,
@@ -12,17 +12,20 @@ export default class userRepository implements IuserRepository {
   private otp: Model<IOtp>;
   private property: Model<IProperty>;
   private seller : Model<ISeller>
+  private whishlist : Model<IWhishlist>
 
   constructor(
     user: Model<IUser>,
     otp: Model<IOtp>,
     property: Model<IProperty>,
-    seller : Model<ISeller>
+    seller : Model<ISeller>,
+    whishlist : Model<IWhishlist>
   ) {
     this.user = user;
     this.otp = otp;
     this.property = property;
     this.seller = seller
+    this.whishlist = whishlist
   }
 
   async checkEmailExists(email: string) {
@@ -175,6 +178,38 @@ export default class userRepository implements IuserRepository {
       return await this.property.findById({_id:id})
     } catch (error) {
       throw new Error("Failed to get product");
+    }
+  }
+
+  async addToWhishlist(userId:string,propertyId:string){
+    try {
+      return await this.whishlist.create({userId,propertyId})
+    } catch (error) {
+      throw new Error("Failed to add to whishlist");
+    }
+  }
+
+  async removeFromWhishlist(userId:string,propertyId:string){
+    try {
+      return await this.whishlist.deleteOne({userId:userId,propertyId:propertyId})
+    } catch (error) {
+      throw new Error("Failed to remove from whishlist");
+    }
+  }
+
+  async getAllWhishlistProperty(userId:string){
+    try {
+      return await this.whishlist.find({userId:userId})
+    } catch (error) {
+      throw new Error("Failder to get all whishlist property")
+    }
+  }
+
+  async whishlistPropertyExist(userId:string,propertyId:string){
+    try {
+      return await this.whishlist.findOne({userId:userId,propertyId:propertyId})
+    } catch (error) {
+      throw new Error("Failder to get all whishlist property")
     }
   }
 }

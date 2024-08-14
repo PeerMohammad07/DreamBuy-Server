@@ -1,4 +1,4 @@
-import IUser, { IProperty, ISeller } from "../../entity/allEntity";
+import IUser, { IProperty, ISeller, IWhishlist } from "../../entity/allEntity";
 import { IregisterBody } from "../Controller/IUserController";
 
 export interface Itoken {
@@ -47,7 +47,7 @@ interface premiumData {
 interface returnMessage {
   status:boolean,
   message:string,
-  data ?: IProperty|null
+  data ?: IProperty|null|IWhishlist
 }
 
 export default interface IuserUseCase{
@@ -68,4 +68,8 @@ export default interface IuserUseCase{
   updatePremium(id:string,type:string):Promise<IUser|null>
   productDetail(id:string):Promise<returnMessage|null>
   sendOwnerDetail(sellerId:string,email:string,name:string,property:IProperty):Promise<returnMessage|null>
+  setBrowserToken(userId:string,token:string):Promise<returnMessage|null>
+  removeFromWhishlist(userId:string,propertyId:string):Promise<returnMessage|null>
+  addToWhishlist(userId:string,propertyId:string):Promise<returnMessage|null>
+  getAllWhishlistProperty(userId:string):Promise<IWhishlist[]|null>
 }

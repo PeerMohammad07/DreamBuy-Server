@@ -194,4 +194,13 @@ export default class SellerRepository implements ISellerRepository {
       return null
     }
   }
+
+  async updateProperty(data:any){
+    try {
+      return await this.property.findOneAndUpdate({sellerId:data.sellerId},{$set:{...data}},{new:true})
+    } catch (error) {
+      console.log(error);
+      return null
+    }
+  }
 }

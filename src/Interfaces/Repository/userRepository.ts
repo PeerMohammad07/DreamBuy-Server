@@ -1,7 +1,8 @@
 import mongoose from "mongoose";
-import IUser, { IProperty, ISeller } from "../../entity/allEntity";
+import IUser, { IProperty, ISeller, IWhishlist } from "../../entity/allEntity";
 import { IregisterBody } from "../Controller/IUserController";
 import { googleLoginData, Itoken } from "../UseCase/IuserUseCase";
+import { DeleteResult } from 'mongodb';
 
 export interface IotpData {
   _id : string
@@ -33,4 +34,8 @@ export default interface IuserRepository{
   checkSellerExists(id: string):Promise<ISeller|null>
   getUser(id:string):Promise<IUser|null>
   getSeller(id:string):Promise<ISeller|null>
+  addToWhishlist(userId:string,propertyId:string):Promise<IWhishlist>
+  removeFromWhishlist(userId:string,propertyId:string):Promise<DeleteResult>
+  getAllWhishlistProperty(userId:string):Promise<IWhishlist[]>
+  whishlistPropertyExist(userId:string,propertyId:string):Promise<IWhishlist|null>
 }

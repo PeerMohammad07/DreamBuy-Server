@@ -24,6 +24,12 @@ export default interface IUser extends Document {
   premiumSubscription?: IPremiumSubscription;
 }
 
+export interface IWhishlist extends Document {
+  _id:string
+  userId : string
+  propertyId : string 
+}
+
 export interface ISeller extends Document {
   _id:string
   name:string
@@ -45,6 +51,10 @@ export interface IOtp extends Document {
   createdAt: Date;
 }
 
+export interface INotification extends Document {
+  userId : string,
+  token : string
+}
 
 export interface IAdmin extends Document {
   _id : string

@@ -20,18 +20,22 @@ import JwtToken from "../utils/jwtService";
 import property from "../db/propertySchema";
 import userAuth from "../middlewares/userAuth";
 import Seller from "../db/sellerSchema";
+import PushNotificationRepository from "../../adapters/Repositorys/pushNotificationRepository";
+import whishListModel from "../db/whishlist";
 
 const userRouter: Router = express.Router();
 
 const jwtService = new JwtToken();
 const hashingService = new HashingService();
 const otpService = new OtpService();
-const UserRepository = new userRepository(Users, OtpSchema, property,Seller);
+const notificationRepository = new PushNotificationRepository()
+const UserRepository = new userRepository(Users, OtpSchema, property,Seller,whishListModel);
 const UserUseCase = new userUseCase(
   UserRepository,
   hashingService,
   otpService,
-  jwtService
+  jwtService,
+  notificationRepository
 );
 const UserController = new userController(UserUseCase);
 
@@ -46,8 +50,13 @@ userRouter.post("/googleLogin", UserController.googleLogin);
 userRouter.post("/forgotPassword", UserController.forgotPassword);
 userRouter.post("/resetPassword", UserController.resetPassword);
 userRouter.post('/productDetail',UserController.productDetail)
+userRouter.post('/setBrowserToken',UserController.setBrowserToken)
 
 userRouter.get('/getUser',UserController.getUser)
+
+userRouter.get('/whishlist/:userId',userAuth,UserController.getAllWhishlistProperty)
+userRouter.post('/whishlist',userAuth,UserController.addToWhishlist)
+userRouter.delete('/whishlist/:userId/:propertyId',userAuth,UserController.removeFromWishlist)
 
 userRouter.get("/getRentProperty", UserController.getRentProperty);
 userRouter.get("/getSaleProperty", UserController.getSaleProperty);

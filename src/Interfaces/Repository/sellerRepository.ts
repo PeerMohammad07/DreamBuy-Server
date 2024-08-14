@@ -2,7 +2,7 @@ import { IProperty, ISeller } from "../../entity/allEntity";
 import { IregisterData } from "../../useCase/sellerUseCase";
 
 import { IOtp } from "../../entity/allEntity";
-import { Property, PropertyData } from "../UseCase/IsellerUseCase";
+import { Property, PropertyData, returnMessage } from "../UseCase/IsellerUseCase";
 
 export default interface ISellerRepository {
   checkEmailExists(email:string):Promise<ISeller|null>
@@ -19,4 +19,5 @@ export default interface ISellerRepository {
   updateSeller(sellerId:string,name:string,phone:string):Promise<ISeller|null>
   getMyProperty(id:string):Promise<IProperty[]|null>
   deletePropety(id:string):Promise<IProperty|null>
+  updateProperty(data:any):Promise<IProperty|null>
 }

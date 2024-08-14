@@ -6,8 +6,10 @@ import {
   randomImageName,
   sharpImage,
 } from "../infrastructure/utils/sharpImage";
+import { IPushNotificationRepository } from "../Interfaces/Repository/pushNotificatio";
 import ISellerRepository from "../Interfaces/Repository/sellerRepository";
 import ISellerUsecase, {
+  IupdatePropertyData,
   PropertyData,
 } from "../Interfaces/UseCase/IsellerUseCase";
 import IhashingService from "../Interfaces/Utils/hashingService";
@@ -27,13 +29,16 @@ export default class SellerUseCase implements ISellerUsecase {
   private hashingService: IhashingService;
   private otpService: IotpService;
   private jwtService: IjwtService;
+  private notificationRepository : IPushNotificationRepository
 
   constructor(
     sellerRepository: ISellerRepository,
     hashingService: IhashingService,
     otpService: IotpService,
-    jwtService: IjwtService
+    jwtService: IjwtService,
+    notificationRepository : IPushNotificationRepository
   ) {
+    this.notificationRepository = notificationRepository
     this.sellerRepository = sellerRepository;
     this.hashingService = hashingService;
     this.otpService = otpService;
@@ -267,7 +272,6 @@ export default class SellerUseCase implements ISellerUsecase {
       const imageUrls = await Promise.all(
         data.images.map(async (image) => {
           try {
-            // Sharpen the image      
             const sharpedImage = await sharpImage(2000,2000,image.base64String);
             const imageName = await randomImageName();
             if (sharpedImage) {
@@ -354,4 +358,65 @@ export default class SellerUseCase implements ISellerUsecase {
       return null
     }
   }
+
+  async setBrowserToken(userId:string,token:string){
+    try {
+      await this.notificationRepository.updateToken(userId,token)
+      return {status:true,message : "usertoken updated"}
+    } catch (error) {
+      console.log(error);
+      return null
+    }
+  }
+
+  async updateProeprty(data: any) {
+    try {
+      if (!data || !data.sellerId ) {
+        return { status: false, message: "Failed to update the property: Missing required fields" };
+      }
+  
+      const seller = await this.sellerRepository.checkUserExists(data.sellerId);
+      if (!seller) {
+        return { status: false, message: "Seller does not exist with this ID" };
+      }
+  
+      let propertyData = { ...data };
+  
+      if (data.propertyImage) {
+        const imageUrls = await Promise.all(
+          data.propertyImage.map(async (image:any) => {
+            try {
+              const sharpedImage = await sharpImage(2000, 2000, image.base64String);
+              const imageName = await randomImageName();
+              if (sharpedImage) {
+                await sendObjectToS3(imageName, image.fileType, sharpedImage);
+                return await createImageUrl(imageName);
+              }
+              return null;
+            } catch (error) {
+              console.error("Error processing image:", error);
+              return null;
+            }
+          })
+        );
+  
+        const validImageUrls = imageUrls.filter((url): url is string => url !== null);
+        propertyData = { ...data, propertyImage: validImageUrls };
+      }
+      console.log(propertyData,"reached herre")
+  
+      const response = await this.sellerRepository.updateProperty(propertyData);
+      console.log("Updated Property:", response); 
+  
+      if (response) {
+        return { status: true, message: "Successfully updated the property", data: response };
+      } else {
+        return { status: false, message: "Failed to update the property: Update response is null" };
+      }
+    } catch (error) {
+      console.error("Error updating property:", error);
+      return { status: false, message: "Failed to update the property: An unexpected error occurred" };
+    }
+  }
+  
 }

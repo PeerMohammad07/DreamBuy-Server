@@ -31,6 +31,23 @@ export interface PropertyData {
   sellerId: string
 };
 
+export interface IupdatePropertyData {
+  sqft?:string
+  propertyType?: string;
+  propertyFor?: string;
+  propertyName?: string;
+  state?: string;
+  city?: string;
+  bedrooms?: number;
+  bathrooms?: number;
+  expectedPrice?: number;
+  features?: string[];
+  description?: string;
+  propertyImage ?: { base64String: string; fileName: string; fileType: string }[];
+  location?: string;
+  sellerId?: string
+};
+
 
 export interface Property {
   sqft:String
@@ -65,4 +82,6 @@ export default interface ISellerUsecase {
   updateSeller(name:string,phone:string,sellerId:string):Promise<updateKycReturn|null>
   getMyProperty(id:string):Promise<IProperty[]|null>
   deleteProperty(id:string):Promise<returnMessage|null>
+  setBrowserToken(userId:string,token:string):Promise<returnMessage|null>
+  updateProeprty(data:IupdatePropertyData):Promise<returnMessage|null>
 }

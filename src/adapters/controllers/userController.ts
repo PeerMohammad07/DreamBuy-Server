@@ -31,6 +31,10 @@ export default class userController implements IUserController {
     this.productDetail = this.productDetail.bind(this)
     this.sendOwnerDetail = this.sendOwnerDetail.bind(this)
     this.getUser = this.getUser.bind(this)
+    this.setBrowserToken = this.setBrowserToken.bind(this)
+    this.addToWhishlist = this.addToWhishlist.bind(this)
+    this.removeFromWishlist = this.removeFromWishlist.bind(this)
+    this.getAllWhishlistProperty = this.getAllWhishlistProperty.bind(this)
   }
 
   async register(
@@ -388,4 +392,52 @@ export default class userController implements IUserController {
       console.log(error);
     }
   }
+
+  async setBrowserToken(req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>,
+    res: Response<any, Record<string, any>>
+  ){
+    try {
+      const {userId,token} = req.body
+      const response = await this.userUseCase.setBrowserToken(userId,token)
+      res.status(200).json(response)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  async addToWhishlist(req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>,
+    res: Response<any, Record<string, any>>){
+      try {
+        const {userId,propertyId} = req.body
+        const response = await this.userUseCase.addToWhishlist(userId,propertyId)
+        res.status(200).json(response)
+      } catch (error) {
+        console.log(error)
+      }
+  } 
+
+  async removeFromWishlist(req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>,
+    res: Response<any, Record<string, any>>){
+      try {
+        const userId = req.params.userId
+        const propertyId = req.params.propertyId
+        console.log(propertyId,userId)
+        const response = await this.userUseCase.removeFromWhishlist(userId,propertyId)
+        res.status(200).json(response)
+      } catch (error) {
+        console.log(error)
+      }
+  } 
+
+  async getAllWhishlistProperty(req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>,
+    res: Response<any, Record<string, any>>){
+      try {
+        const userId = req.params.userId
+        const response = await this.userUseCase.getAllWhishlistProperty(userId)
+        res.status(200).json(response)
+      } catch (error) {
+        console.log(error)
+      }
+    }
+
 }
