@@ -12,6 +12,7 @@ import { randomImageName, sharpImage } from "../infrastructure/utils/sharpImage"
 import { createImageUrl, sendObjectToS3 } from "../infrastructure/utils/s3Bucket";
 import sendEmailOwnerDetails from "../infrastructure/utils/sendSellerDetails";
 import { IProperty } from "../entity/allEntity";
+import { IPushNotificationRepository } from "../Interfaces/Repository/pushNotificatio";
 
 export default class userUseCase implements IuserUseCase {
   private userRepository: IuserRepository;
@@ -403,7 +404,6 @@ export default class userUseCase implements IuserUseCase {
       return null
     }
   }
-
 
 
   async addToWhishlist(userId:string,propertyId:string){

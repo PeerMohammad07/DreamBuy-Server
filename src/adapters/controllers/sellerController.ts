@@ -348,5 +348,4 @@ export default class SellerController implements ISellerController {
         console.log(error);
       }
   }
-
 }

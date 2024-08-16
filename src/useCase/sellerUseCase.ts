@@ -6,6 +6,7 @@ import {
   randomImageName,
   sharpImage,
 } from "../infrastructure/utils/sharpImage";
+import { IPushNotificationRepository } from "../Interfaces/Repository/pushNotificatio";
 import ISellerRepository from "../Interfaces/Repository/sellerRepository";
 import ISellerUsecase, {
   IupdatePropertyData,
@@ -34,6 +35,7 @@ export default class SellerUseCase implements ISellerUsecase {
     hashingService: IhashingService,
     otpService: IotpService,
     jwtService: IjwtService,
+
   ) {
     this.sellerRepository = sellerRepository;
     this.hashingService = hashingService;
@@ -354,7 +356,6 @@ export default class SellerUseCase implements ISellerUsecase {
       return null
     }
   }
-
 
   async updateProeprty(data: any) {
     try {

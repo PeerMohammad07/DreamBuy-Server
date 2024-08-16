@@ -1,4 +1,5 @@
 import IChatRepository from "../Interfaces/Repository/chatRepository";
+import { IPushNotificationRepository } from "../Interfaces/Repository/pushNotificatio";
 import IchatUseCase from "../Interfaces/UseCase/IchatUsecase";
 import IImageAndVideoUpload from "../Interfaces/Utils/ImageAndVideoUpload";
 
@@ -11,7 +12,7 @@ export default class chatUseCase implements IchatUseCase {
   private chatRepository
   private imageAndVideoUpload : IImageAndVideoUpload
 
-  constructor(chatRepository: IChatRepository, imageAndVideoUpload : IImageAndVideoUpload) {
+  constructor(chatRepository: IChatRepository, notificationRepository: IPushNotificationRepository,imageAndVideoUpload : IImageAndVideoUpload) {
     this.chatRepository = chatRepository
     this.imageAndVideoUpload = imageAndVideoUpload
   }
