@@ -6,7 +6,6 @@ import {
   randomImageName,
   sharpImage,
 } from "../infrastructure/utils/sharpImage";
-import { IPushNotificationRepository } from "../Interfaces/Repository/pushNotificatio";
 import ISellerRepository from "../Interfaces/Repository/sellerRepository";
 import ISellerUsecase, {
   IupdatePropertyData,
@@ -29,16 +28,13 @@ export default class SellerUseCase implements ISellerUsecase {
   private hashingService: IhashingService;
   private otpService: IotpService;
   private jwtService: IjwtService;
-  private notificationRepository : IPushNotificationRepository
 
   constructor(
     sellerRepository: ISellerRepository,
     hashingService: IhashingService,
     otpService: IotpService,
     jwtService: IjwtService,
-    notificationRepository : IPushNotificationRepository
   ) {
-    this.notificationRepository = notificationRepository
     this.sellerRepository = sellerRepository;
     this.hashingService = hashingService;
     this.otpService = otpService;
@@ -359,15 +355,6 @@ export default class SellerUseCase implements ISellerUsecase {
     }
   }
 
-  async setBrowserToken(userId:string,token:string){
-    try {
-      await this.notificationRepository.updateToken(userId,token)
-      return {status:true,message : "usertoken updated"}
-    } catch (error) {
-      console.log(error);
-      return null
-    }
-  }
 
   async updateProeprty(data: any) {
     try {

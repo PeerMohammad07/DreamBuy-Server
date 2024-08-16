@@ -143,7 +143,7 @@ export default class userRepository implements IuserRepository {
 
   async getSaleProperty() {
     try {
-      return await this.property.find({ propertyFor: "sale" });
+      return await this.property.find({ propertyFor: "sale"  });
     } catch (error) {
       throw new Error("Failed to get sale property");
     }
@@ -183,7 +183,7 @@ export default class userRepository implements IuserRepository {
 
   async addToWhishlist(userId:string,propertyId:string){
     try {
-      return await this.whishlist.create({userId,propertyId})
+      return (await this.whishlist.create({userId,propertyId})).populate("propertyId")
     } catch (error) {
       throw new Error("Failed to add to whishlist");
     }
@@ -199,7 +199,7 @@ export default class userRepository implements IuserRepository {
 
   async getAllWhishlistProperty(userId:string){
     try {
-      return await this.whishlist.find({userId:userId})
+      return await this.whishlist.find({userId:userId}).populate("propertyId")
     } catch (error) {
       throw new Error("Failder to get all whishlist property")
     }

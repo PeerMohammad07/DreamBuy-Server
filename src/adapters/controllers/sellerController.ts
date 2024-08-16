@@ -24,7 +24,6 @@ export default class SellerController implements ISellerController {
     this.getMyProperty = this.getMyProperty.bind(this)
     this.deleteProeprty = this.deleteProeprty.bind(this)
     this.updateProeprty = this.updateProeprty.bind(this)
-    this.setBrowserToken = this.setBrowserToken.bind(this)
   }
 
   async register(
@@ -350,16 +349,4 @@ export default class SellerController implements ISellerController {
       }
   }
 
-  async setBrowserToken(req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>,
-    res: Response<any, Record<string, any>>){
-    try {
-      const {userId,token} = req.body
-      const response = await this.sellerUseCase.setBrowserToken(userId,token)
-      if(response?.status){
-        res.status(200).json(response)
-      }
-    } catch (error) {
-      console.log(error)
-    }
-  }
 }

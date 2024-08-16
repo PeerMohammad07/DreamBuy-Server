@@ -171,7 +171,7 @@ export default class adminRepository implements IadminRepository {
     try {
       return await this.property.find({propertyFor:"rent"})
     } catch (error) {
-      console.log(error)
+      throw new Error()
     }
   }
 
@@ -179,7 +179,7 @@ export default class adminRepository implements IadminRepository {
     try {
       return await this.property.find({propertyFor:"sale"})
     } catch (error) {
-      console.log(error)
+      throw new Error()
     }
   }
 
@@ -187,7 +187,7 @@ export default class adminRepository implements IadminRepository {
     try {
       return await this.amenities.find({isBlocked:false}).countDocuments()
     } catch (error) {
-      console.log(error)
+      throw new Error()
     }
   }
 
@@ -195,7 +195,7 @@ export default class adminRepository implements IadminRepository {
     try {
       return await this.category.find({isBlocked:false}).countDocuments()
     } catch (error) {
-      console.log(error)
+      throw new Error()
     }
   }
 
@@ -203,7 +203,7 @@ export default class adminRepository implements IadminRepository {
     try {
       return await this.seller.find({isBlocked:false}).countDocuments()
     } catch (error) {
-      console.log(error)
+      throw new Error()
     }
   }
 
@@ -211,7 +211,7 @@ export default class adminRepository implements IadminRepository {
     try {
       return await this.user.find({isBlocked:false}).countDocuments()
     } catch (error) {
-      console.log(error)
+      throw new Error()
     }
   }
 }

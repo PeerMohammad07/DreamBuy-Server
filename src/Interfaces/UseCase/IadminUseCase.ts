@@ -6,6 +6,15 @@ export interface returnData{
   adminRefreshToken?:string
 }
 
+export type DashboardData = {
+  noOfUsers: number;
+  noOfSellers: number;
+  noOfCategories: number;
+  noOfAmenities: number;
+  noOfRentProperties: number;
+  noOfSaleProperties: number;
+};
+
 export interface IadminUseCase {
   login(email:string,password:string):Promise<returnData|void>
   getUsers():void
@@ -20,4 +29,6 @@ export interface IadminUseCase {
   addAmenity(name: string):Promise<IAmenities|void>
   editAmenity(id: string, name: string):Promise<IAmenities|null>
   blockAmenity(id: string, status: boolean):Promise<string|null>
+  getAllDashboardDatas(): Promise<DashboardData>;
+
 }

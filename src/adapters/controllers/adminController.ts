@@ -23,6 +23,7 @@ export default class adminController implements IAdminController {
     this.addAmenity = this.addAmenity.bind(this);
     this.editAmenity = this.editAmenity.bind(this);
     this.blockAmenity = this.blockAmenity.bind(this)
+    this.allDashboardDatas = this.allDashboardDatas.bind(this)
   }
 
   async login(
@@ -217,4 +218,14 @@ export default class adminController implements IAdminController {
     }
   }
 
+
+  async allDashboardDatas(req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>,
+    res: Response<any, Record<string, any>>) {
+      try {
+        const response = await this.adminUseCase.getAllDashboardDatas()
+        res.status(200).json(response)
+      } catch (error) {
+        console.log(error)
+      }
+  }
 }

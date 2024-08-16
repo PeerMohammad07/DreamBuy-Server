@@ -1,5 +1,4 @@
 import IChatRepository from "../Interfaces/Repository/chatRepository";
-import { IPushNotificationRepository } from "../Interfaces/Repository/pushNotificatio";
 import IchatUseCase from "../Interfaces/UseCase/IchatUsecase";
 import IImageAndVideoUpload from "../Interfaces/Utils/ImageAndVideoUpload";
 
@@ -10,12 +9,10 @@ interface FileObject {
 
 export default class chatUseCase implements IchatUseCase {
   private chatRepository
-  private notificationRepository: IPushNotificationRepository
   private imageAndVideoUpload : IImageAndVideoUpload
 
-  constructor(chatRepository: IChatRepository, notificationRepository: IPushNotificationRepository,imageAndVideoUpload : IImageAndVideoUpload) {
+  constructor(chatRepository: IChatRepository, imageAndVideoUpload : IImageAndVideoUpload) {
     this.chatRepository = chatRepository
-    this.notificationRepository = notificationRepository
     this.imageAndVideoUpload = imageAndVideoUpload
   }
 
@@ -34,7 +31,6 @@ export default class chatUseCase implements IchatUseCase {
       if (!conversation) {
         conversation = await this.chatRepository.createConversation(senderId, recieverId)
       }
-      await this.notificationRepository.sendPushNotification(recieverId, message)
       return await this.chatRepository.storeMessage(senderId, message, conversation._id)
     } catch (error) {
       console.log(error);

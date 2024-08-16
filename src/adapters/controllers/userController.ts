@@ -1,5 +1,4 @@
 import {
-  IregisterBody,
   IUserController,
 } from "../../Interfaces/Controller/IUserController";
 import IuserUseCase from "../../Interfaces/UseCase/IuserUseCase";
@@ -31,7 +30,6 @@ export default class userController implements IUserController {
     this.productDetail = this.productDetail.bind(this)
     this.sendOwnerDetail = this.sendOwnerDetail.bind(this)
     this.getUser = this.getUser.bind(this)
-    this.setBrowserToken = this.setBrowserToken.bind(this)
     this.addToWhishlist = this.addToWhishlist.bind(this)
     this.removeFromWishlist = this.removeFromWishlist.bind(this)
     this.getAllWhishlistProperty = this.getAllWhishlistProperty.bind(this)
@@ -393,17 +391,6 @@ export default class userController implements IUserController {
     }
   }
 
-  async setBrowserToken(req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>,
-    res: Response<any, Record<string, any>>
-  ){
-    try {
-      const {userId,token} = req.body
-      const response = await this.userUseCase.setBrowserToken(userId,token)
-      res.status(200).json(response)
-    } catch (error) {
-      console.log(error)
-    }
-  }
 
   async addToWhishlist(req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>,
     res: Response<any, Record<string, any>>){

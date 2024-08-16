@@ -13,12 +13,13 @@ const transporter = nodemailer.createTransport({
 });
 
 const sendEmailOwnerDetails = async (to: string, userName: string, ownerDetails: ISeller, propertyDetails: IProperty) => {
+  const logoUrl = "https://dreambuy.s3.amazonaws.com/dreambuywhitelogo.png"
   try {
     const htmlContent = `
       <html>
         <body style="font-family: Arial, sans-serif; color: #333;">
           <div style="text-align: center; padding: 20px;">
-            <img src="https://example.com/logo.png" alt="Dream Buy Logo" style="width: 150px;" />
+            <img src="${logoUrl}" alt="Dream Buy Logo" style="width: 150px;" />
           </div>
           <div style="padding: 20px;">
             <h2>Hi ${userName},</h2>

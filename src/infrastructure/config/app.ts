@@ -7,7 +7,6 @@ import cookieParser from "cookie-parser";
 import sellerRouter from "../routes/sellerRoutes";
 import adminRouter from "../routes/adminRoutes";
 import job from "../utils/cronJob";
-import amenitiesModal from "../db/amenitiesSchema";
 import chatRouter from "../routes/chatRoutes";
 import path from "path";
 import {EventEmitter} from "events";

@@ -12,23 +12,19 @@ import { randomImageName, sharpImage } from "../infrastructure/utils/sharpImage"
 import { createImageUrl, sendObjectToS3 } from "../infrastructure/utils/s3Bucket";
 import sendEmailOwnerDetails from "../infrastructure/utils/sendSellerDetails";
 import { IProperty } from "../entity/allEntity";
-import { IPushNotificationRepository } from "../Interfaces/Repository/pushNotificatio";
 
 export default class userUseCase implements IuserUseCase {
   private userRepository: IuserRepository;
   private hashingService: IhashingService;
   private otpService: IotpService;
   private jwtService: IjwtService;
-  private notificationRepository :IPushNotificationRepository
 
   constructor(
     userRepository: IuserRepository,
     HashingService: IhashingService,
     otpService: IotpService,
     jwtService: IjwtService,
-    notificationRepository : IPushNotificationRepository
   ) {
-    this.notificationRepository = notificationRepository
     this.userRepository = userRepository;
     this.hashingService = HashingService;
     this.otpService = otpService;
@@ -408,15 +404,7 @@ export default class userUseCase implements IuserUseCase {
     }
   }
 
-  async setBrowserToken(userId:string,token:string){
-    try {
-      await this.notificationRepository.updateToken(userId,token)
-      return {status:true,message: "usertoken updated"}
-    } catch (error) {
-      console.log(error);
-      return null
-    }
-  }
+
 
   async addToWhishlist(userId:string,propertyId:string){
     try {

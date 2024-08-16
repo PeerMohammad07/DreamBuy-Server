@@ -4,7 +4,6 @@ import chatUseCase from "../../useCase/chatUseCase";
 import chatRepository from "../../adapters/Repositorys/chatRepository";
 import messageModal from "../db/message";
 import conversationModal from "../db/conversation";
-import PushNotificationRepository from "../../adapters/Repositorys/pushNotificationRepository";
 import ImageAndVideoUpload from "../utils/imageAndVideoUploads";
 import { ImageUpload } from "../middlewares/multer";
 
@@ -12,9 +11,8 @@ import { ImageUpload } from "../middlewares/multer";
 const chatRouter : Router = express.Router()
 
 const ChatRepositoty = new chatRepository(conversationModal,messageModal)
-const notificationRepository = new PushNotificationRepository()
 const imageAndVideoUpload= new ImageAndVideoUpload()
-const ChatUseCase = new chatUseCase(ChatRepositoty,notificationRepository,imageAndVideoUpload)
+const ChatUseCase = new chatUseCase(ChatRepositoty,imageAndVideoUpload)
 const ChatController = new chatController(ChatUseCase)
 
 

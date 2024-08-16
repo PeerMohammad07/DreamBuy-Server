@@ -68,7 +68,6 @@ export default interface IuserUseCase{
   updatePremium(id:string,type:string):Promise<IUser|null>
   productDetail(id:string):Promise<returnMessage|null>
   sendOwnerDetail(sellerId:string,email:string,name:string,property:IProperty):Promise<returnMessage|null>
-  setBrowserToken(userId:string,token:string):Promise<returnMessage|null>
   removeFromWhishlist(userId:string,propertyId:string):Promise<returnMessage|null>
   addToWhishlist(userId:string,propertyId:string):Promise<returnMessage|null>
   getAllWhishlistProperty(userId:string):Promise<IWhishlist[]|null>

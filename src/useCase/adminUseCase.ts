@@ -174,4 +174,29 @@ export default class adminUseCase implements IadminUseCase {
     }
   }
 
+  async getAllDashboardDatas() {
+    try {
+      const [noOfUsers, noOfSellers, noOfCategories, noOfAmenities, noOfRentProperties, noOfSaleProperties] = await Promise.all([
+        this.adminRepository.noOfUsers(),
+        this.adminRepository.noOfSellers(),
+        this.adminRepository.noOfCategory(),
+        this.adminRepository.noOfAmenities(),
+        this.adminRepository.noOfRentProperty(),
+        this.adminRepository.noOfSaleProperty()
+      ]);
+  
+      return {
+        noOfUsers,
+        noOfSellers,
+        noOfCategories,
+        noOfAmenities,
+        noOfRentProperties: noOfRentProperties.length,
+        noOfSaleProperties: noOfSaleProperties.length,
+      };
+    } catch (error) {
+      console.log(error);
+      throw new Error("Failed to fetch dashboard data");
+    }
+  }
+  
 }

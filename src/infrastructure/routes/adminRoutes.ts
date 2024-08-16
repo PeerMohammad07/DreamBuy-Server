@@ -58,4 +58,6 @@ adminRouter.route('/amenities')
   .put(adminAuth, AdminController.editAmenity);
 adminRouter.put('/amenityBlock',AdminController.blockAmenity)
 
+adminRouter.get('/getAllDashbaordData',adminAuth ,AdminController.allDashboardDatas)
+
 export default adminRouter;

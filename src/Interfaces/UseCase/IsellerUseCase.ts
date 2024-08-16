@@ -82,6 +82,5 @@ export default interface ISellerUsecase {
   updateSeller(name:string,phone:string,sellerId:string):Promise<updateKycReturn|null>
   getMyProperty(id:string):Promise<IProperty[]|null>
   deleteProperty(id:string):Promise<returnMessage|null>
-  setBrowserToken(userId:string,token:string):Promise<returnMessage|null>
   updateProeprty(data:IupdatePropertyData):Promise<returnMessage|null>
 }
