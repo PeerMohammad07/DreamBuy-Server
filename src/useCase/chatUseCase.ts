@@ -12,7 +12,7 @@ export default class chatUseCase implements IchatUseCase {
   private chatRepository
   private imageAndVideoUpload : IImageAndVideoUpload
 
-  constructor(chatRepository: IChatRepository, notificationRepository: IPushNotificationRepository,imageAndVideoUpload : IImageAndVideoUpload) {
+  constructor(chatRepository: IChatRepository,imageAndVideoUpload : IImageAndVideoUpload) {
     this.chatRepository = chatRepository
     this.imageAndVideoUpload = imageAndVideoUpload
   }

@@ -11,7 +11,6 @@ import OtpService from "../utils/otpService";
 import JwtToken from "../utils/jwtService";
 import property from "../db/propertySchema";
 import sellerAuth from "../middlewares/sellerAuth";
-import notificationModel from "../db/pushNotificationSchema";
 import PushNotificationRepository from "../../adapters/Repositorys/pushNotificationRepository";
 
 const sellerRouter: Router = express.Router();
@@ -19,17 +18,12 @@ const sellerRouter: Router = express.Router();
 const jwtService = new JwtToken();
 const otpService = new OtpService();
 const hashingService = new HashingService();
-const notificationRepository = new PushNotificationRepository()
 const sellerRepository = new SellerRepository(Seller, OtpModel, property);
 const sellerUseCase = new SellerUseCase(
   sellerRepository,
   hashingService,
   otpService,
   jwtService,
-<<<<<<< HEAD
-=======
-  notificationRepository
->>>>>>> 4ba3c8d (feat : whishlist feature done 👍)
 );
 const sellerController = new SellerController(sellerUseCase);
 
@@ -52,10 +46,6 @@ sellerRouter.post('/updateSeller',sellerAuth,sellerController.updateSeller)
 sellerRouter.post("/addProperty", sellerAuth, sellerController.addProperty);
 sellerRouter.post('/deleteProperty',sellerAuth,sellerController.deleteProeprty)
 sellerRouter.put('/updateProperty',sellerAuth,sellerController.updateProeprty)
-<<<<<<< HEAD
-=======
-sellerRouter.post('/setBrowserToken',sellerController.setBrowserToken)
->>>>>>> 4ba3c8d (feat : whishlist feature done 👍)
 
 
 sellerRouter.get("/getMyProperty/:id",sellerAuth,sellerController.getMyProperty)
