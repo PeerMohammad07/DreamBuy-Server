@@ -21,13 +21,14 @@ import property from "../db/propertySchema";
 import userAuth from "../middlewares/userAuth";
 import Seller from "../db/sellerSchema";
 import whishListModel from "../db/whishlist";
+import RevenueModel from "../db/revenueSchema";
 
 const userRouter: Router = express.Router();
 
 const jwtService = new JwtToken();
 const hashingService = new HashingService();
 const otpService = new OtpService()
-const UserRepository = new userRepository(Users, OtpSchema, property,Seller,whishListModel);
+const UserRepository = new userRepository(Users, OtpSchema, property,Seller,whishListModel,RevenueModel);
 const UserUseCase = new userUseCase(
   UserRepository,
   hashingService,

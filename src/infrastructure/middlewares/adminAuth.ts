@@ -7,9 +7,10 @@ import adminSchema from "../db/adminSchema";
 import categoryModal from "../db/categorySchema";
 import property from "../db/propertySchema";
 import amenitiesModal from "../db/amenitiesSchema";
+import RevenueModel from "../db/revenueSchema";
 
 const jwtService = new JwtToken()
-const adminRepo = new adminRepository(adminSchema, UserModel, Seller,categoryModal,property,amenitiesModal)
+const adminRepo = new adminRepository(adminSchema, UserModel, Seller,categoryModal,property,amenitiesModal,RevenueModel)
 
 interface IAuthRequest extends Request {
   userId?: string;

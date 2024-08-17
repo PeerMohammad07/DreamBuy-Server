@@ -19,8 +19,10 @@ export interface IAdminController {
     req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>,
     res: Response<any, Record<string, any>>
   ): Promise<void>;
-  getCategory(req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>,
-    res: Response<any, Record<string, any>>): Promise<void>
+  getCategory(
+    req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>,
+    res: Response<any, Record<string, any>>
+  ): Promise<void>;
   blockCategory(
     req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>,
     res: Response<any, Record<string, any>>
@@ -28,17 +30,21 @@ export interface IAdminController {
   blockProperty(
     req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>,
     res: Response<any, Record<string, any>>
-  ):Promise<void>
+  ): Promise<void>;
   addAmenity(
     req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>,
     res: Response<any, Record<string, any>>
-  ):Promise<void>
+  ): Promise<void>;
   editAmenity(
     req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>,
     res: Response<any, Record<string, any>>
-  ):Promise<void>
+  ): Promise<void>;
   blockAmenity(
     req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>,
     res: Response<any, Record<string, any>>
-  ):Promise<void>
+  ): Promise<void>;
+  getMonthlyRevenue(
+    req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>,
+    res: Response<any, Record<string, any>>
+  ): Promise<void>
 }

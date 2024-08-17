@@ -42,7 +42,7 @@ const seller = new Schema({
     type:Number,
     required:true
   }
-})
+},{timestamps:true})
 
 const Seller = mongoose.model<ISeller>("seller",seller)
 

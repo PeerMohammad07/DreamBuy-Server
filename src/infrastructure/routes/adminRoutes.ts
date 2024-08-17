@@ -11,6 +11,7 @@ import Seller from "../db/sellerSchema";
 import categoryModal from "../db/categorySchema";
 import property from "../db/propertySchema";
 import amenitiesModal from "../db/amenitiesSchema";
+import RevenueModel from "../db/revenueSchema";
 
 const adminRouter: Router = express.Router();
 
@@ -20,7 +21,8 @@ const AdminRepository = new adminRepository(
   Seller, 
   categoryModal, 
   property, 
-  amenitiesModal
+  amenitiesModal,
+  RevenueModel
 );
 const JwtService = new JwtToken();
 const HashingServiceInstance = new HashingService();
@@ -59,5 +61,6 @@ adminRouter.route('/amenities')
 adminRouter.put('/amenityBlock',AdminController.blockAmenity)
 
 adminRouter.get('/getAllDashbaordData',adminAuth ,AdminController.allDashboardDatas)
+adminRouter.get('/getMonthlyRevenue',AdminController.getMonthlyRevenue)
 
 export default adminRouter;

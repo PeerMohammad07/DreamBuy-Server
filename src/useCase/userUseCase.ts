@@ -341,13 +341,17 @@ export default class userUseCase implements IuserUseCase {
 
   async updatePremium(id: string, type: string) {
     try {
+      let amount ;
       const startDate = new Date();
       let expiryDate = new Date();
       if (type === 'weekly') {
+        amount = 199
         expiryDate.setDate(startDate.getDate() + 7);
       } else if (type === 'monthly') {
+        amount = 299
         expiryDate.setMonth(startDate.getMonth() + 1);
       } else if (type === 'three_months') {
+        amount = 799
         expiryDate.setMonth(startDate.getMonth() + 3);
       } else {
         throw new Error("Invalid subscription type");
@@ -356,10 +360,13 @@ export default class userUseCase implements IuserUseCase {
       const user =  await this.userRepository.checkUserExists(id)
       if(user&&user.isPremium&&user.premiumSubscription?.expiryDate){
         if(user.premiumSubscription?.subscriptionType == "weekly"){
+          amount = 199
           expiryDate.setDate(user.premiumSubscription.expiryDate.getDate() + 7);
         }else if(user.premiumSubscription?.subscriptionType == "monthly"){
+          amount = 299
           expiryDate.setDate(user.premiumSubscription.expiryDate.getMonth() + 1);
         }else if(user.premiumSubscription?.subscriptionType == "three_months"){
+          amount = 799
           expiryDate.setDate(user.premiumSubscription.expiryDate.getMonth() + 3);
         }
       }
@@ -369,7 +376,17 @@ export default class userUseCase implements IuserUseCase {
         startDate: startDate,
         expiryDate: expiryDate
       };
+
       const updatedUser = await this.userRepository.updatePremium(id, newSubscription)
+
+      const transactionId = updatedUser?._id.toString()
+      const revenueData = {
+        transactionId : transactionId ,
+        userId : id,
+        amount,
+        date : startDate
+      }
+      await this.userRepository.updateRevenue(revenueData)
       return updatedUser
     } catch (error) {
       console.log(error);

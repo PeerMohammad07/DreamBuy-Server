@@ -176,15 +176,18 @@ export default class adminUseCase implements IadminUseCase {
 
   async getAllDashboardDatas() {
     try {
-      const [noOfUsers, noOfSellers, noOfCategories, noOfAmenities, noOfRentProperties, noOfSaleProperties] = await Promise.all([
+      const [noOfUsers, noOfSellers, noOfCategories, noOfAmenities, noOfRentProperties, noOfSaleProperties,mostUsedAmenities,mostUsedCategorys,noOfPremiumUsers,totalRevenue] = await Promise.all([
         this.adminRepository.noOfUsers(),
         this.adminRepository.noOfSellers(),
         this.adminRepository.noOfCategory(),
         this.adminRepository.noOfAmenities(),
         this.adminRepository.noOfRentProperty(),
-        this.adminRepository.noOfSaleProperty()
+        this.adminRepository.noOfSaleProperty(),
+        this.adminRepository.mostUsedAmenities(),
+        this.adminRepository.mostUsedCategorys(),
+        this.adminRepository.noOfPremiumUsers(),
+        this.adminRepository.totalRevenue(),
       ]);
-  
       return {
         noOfUsers,
         noOfSellers,
@@ -192,6 +195,10 @@ export default class adminUseCase implements IadminUseCase {
         noOfAmenities,
         noOfRentProperties: noOfRentProperties.length,
         noOfSaleProperties: noOfSaleProperties.length,
+        mostUsedAmenities ,
+        mostUsedCategorys,
+        noOfPremiumUsers,
+        totalRevenue
       };
     } catch (error) {
       console.log(error);
@@ -199,4 +206,26 @@ export default class adminUseCase implements IadminUseCase {
     }
   }
   
+  async getMonthlyRevenue(){
+    try {
+      const [userGrowth,sellerGrowth,monthlyRevenue] = await Promise.all([
+        this.adminRepository.userGrowth(),
+        this.adminRepository.sellerGrowth(),
+        this.adminRepository.monthlyRevenue()
+      ])
+      const combinedGrowth = userGrowth.map((user) => {
+        const seller = sellerGrowth.find(seller => seller.year === user.year && seller.month === user.month);
+        return {
+          year: user.year,
+          month: user.month,
+          newUsers: user.newUsers,
+          newSellers: seller ? seller.newSellers : 0
+        };
+      });
+      return { combinedGrowth, monthlyRevenue };
+    } catch (error) {
+      console.log(error)
+      throw new Error("Failed to get monthly revenue")
+    }
+  }
 }

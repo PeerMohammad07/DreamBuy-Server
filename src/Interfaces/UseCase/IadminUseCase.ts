@@ -15,6 +15,26 @@ export type DashboardData = {
   noOfSaleProperties: number;
 };
 
+
+interface GrowthData {
+  year: number | null;
+  month: number | null;
+  newUsers: number;
+  newSellers: number;
+}
+
+interface MonthlyRevenueData {
+  year: number | null;
+  month: number | null;
+  totalRevenue: number;
+}
+
+interface GetMonthlyRevenueResponse {
+  combinedGrowth: GrowthData[];
+  monthlyRevenue: MonthlyRevenueData[];
+}
+
+
 export interface IadminUseCase {
   login(email:string,password:string):Promise<returnData|void>
   getUsers():void
@@ -30,5 +50,6 @@ export interface IadminUseCase {
   editAmenity(id: string, name: string):Promise<IAmenities|null>
   blockAmenity(id: string, status: boolean):Promise<string|null>
   getAllDashboardDatas(): Promise<DashboardData>;
+  getMonthlyRevenue():Promise<GetMonthlyRevenueResponse>
 
 }

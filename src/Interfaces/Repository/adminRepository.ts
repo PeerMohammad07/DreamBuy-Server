@@ -21,4 +21,11 @@ export default interface IadminRepository {
   noOfCategory(): Promise<number>;
   noOfSellers(): Promise<number>;
   noOfUsers(): Promise<number>;
+  mostUsedCategorys():Promise<IProperty[]>
+  mostUsedAmenities():Promise<IProperty[]>
+  noOfPremiumUsers():Promise<number>
+  totalRevenue():Promise<any[]>
+  userGrowth():Promise<any[]>
+  sellerGrowth():Promise<any[]>,
+  monthlyRevenue() : Promise<any[]>
 }

@@ -1,11 +1,13 @@
 import { Model } from "mongoose";
-import IUser, { IOtp, IProperty, ISeller, IToken, IWhishlist } from "../../entity/allEntity";
+import IUser, { IOtp, IProperty, IRevenue, ISeller, IToken, IWhishlist } from "../../entity/allEntity";
 import IuserRepository, {
   IotpData,
   IPremiumSubscription,
+  IRevenueData,
 } from "../../Interfaces/Repository/userRepository";
 import { IregisterBody } from "../../Interfaces/Controller/IUserController";
 import { googleLoginData } from "../../Interfaces/UseCase/IuserUseCase";
+import { Mode } from "fs";
 
 export default class userRepository implements IuserRepository {
   private user: Model<IUser>;
@@ -13,19 +15,22 @@ export default class userRepository implements IuserRepository {
   private property: Model<IProperty>;
   private seller : Model<ISeller>
   private whishlist : Model<IWhishlist>
+  private revenue : Model<IRevenue>
 
   constructor(
     user: Model<IUser>,
     otp: Model<IOtp>,
     property: Model<IProperty>,
     seller : Model<ISeller>,
-    whishlist : Model<IWhishlist>
+    whishlist : Model<IWhishlist>,
+    revenue : Model<IRevenue>
   ) {
     this.user = user;
     this.otp = otp;
     this.property = property;
     this.seller = seller
     this.whishlist = whishlist
+    this.revenue = revenue
   }
 
   async checkEmailExists(email: string) {
@@ -161,6 +166,21 @@ export default class userRepository implements IuserRepository {
     }
   }
 
+  async updateRevenue(data:IRevenueData){
+    try {
+      const newRevenue = new this.revenue({
+        userId : data.userId,
+        amount : data.amount,
+        date : data.date,
+        transactionId : data.transactionId
+      })
+      return await newRevenue.save()
+    } catch (error) {
+      console.log(error)
+      throw new Error("Failed to create revenue");
+    }
+  }
+
   async updatePremium(id:string,newSubscription:IPremiumSubscription): Promise<IUser | null> {
     try {
       return await this.user.findByIdAndUpdate(
@@ -212,4 +232,5 @@ export default class userRepository implements IuserRepository {
       throw new Error("Failder to get all whishlist property")
     }
   }
+
 }

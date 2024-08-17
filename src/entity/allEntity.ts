@@ -12,6 +12,13 @@ export interface IAmenities extends Document {
   createdAt: Date;
 }
 
+export interface IRevenue {
+  transactionId: string;
+  userId: string;
+  amount: number;
+  date: Date;
+}
+
 export default interface IUser extends Document {
   _id:string
   name: string;

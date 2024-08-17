@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import IUser, { IProperty, ISeller, IWhishlist } from "../../entity/allEntity";
+import IUser, { IProperty, IRevenue, ISeller, IWhishlist } from "../../entity/allEntity";
 import { IregisterBody } from "../Controller/IUserController";
 import { googleLoginData, Itoken } from "../UseCase/IuserUseCase";
 import { DeleteResult } from 'mongodb';
@@ -16,6 +16,14 @@ export interface IPremiumSubscription {
   startDate: Date;
   expiryDate: Date;
 }
+
+export interface IRevenueData {
+  transactionId: string|undefined
+  userId: string;
+  amount: number;
+  date: Date;
+}
+
 
 export default interface IuserRepository{
   checkEmailExists(email:string):Promise<IUser|null>
@@ -38,4 +46,5 @@ export default interface IuserRepository{
   removeFromWhishlist(userId:string,propertyId:string):Promise<DeleteResult>
   getAllWhishlistProperty(userId:string):Promise<IWhishlist[]>
   whishlistPropertyExist(userId:string,propertyId:string):Promise<IWhishlist|null>
+  updateRevenue(data:IRevenueData):Promise<IRevenue>
 }

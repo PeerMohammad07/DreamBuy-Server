@@ -361,6 +361,7 @@ export default class userController implements IUserController {
   async updatePremium(req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>,
     res: Response<any, Record<string, any>>) {
     try {
+      console.log("check thre premum request going twice ro not")
       const { type, id } = req.body
       const response = await this.userUseCase.updatePremium(id, type)
       res.status(200).json(response)

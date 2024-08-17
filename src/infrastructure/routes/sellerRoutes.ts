@@ -11,7 +11,6 @@ import OtpService from "../utils/otpService";
 import JwtToken from "../utils/jwtService";
 import property from "../db/propertySchema";
 import sellerAuth from "../middlewares/sellerAuth";
-import PushNotificationRepository from "../../adapters/Repositorys/pushNotificationRepository";
 
 const sellerRouter: Router = express.Router();
 
