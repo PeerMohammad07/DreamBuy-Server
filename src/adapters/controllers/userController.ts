@@ -2,7 +2,7 @@ import {
   IUserController,
 } from "../../Interfaces/Controller/IUserController";
 import IuserUseCase from "../../Interfaces/UseCase/IuserUseCase";
-import { Request, Response } from "express";
+import { Request, response, Response } from "express";
 import { ParamsDictionary } from "express-serve-static-core";
 import { ParsedQs } from "qs";
 import { avatarImage } from "../../infrastructure/utils/avatarImae";
@@ -33,6 +33,7 @@ export default class userController implements IUserController {
     this.addToWhishlist = this.addToWhishlist.bind(this)
     this.removeFromWishlist = this.removeFromWishlist.bind(this)
     this.getAllWhishlistProperty = this.getAllWhishlistProperty.bind(this)
+    this.getListingProperty = this.getListingProperty.bind(this)
   }
 
   async register(
@@ -48,14 +49,14 @@ export default class userController implements IUserController {
         });
       }
 
-      const randNumber =  Math.floor(Math.random() * (10 - 1 + 1)) + 1;
+      const randNumber = Math.floor(Math.random() * (10 - 1 + 1)) + 1;
       const randomImage = avatarImage(randNumber)
 
       const data = {
         name,
         email,
         password,
-        image:randomImage,
+        image: randomImage,
       };
 
       const response = await this.userUseCase.register(data);
@@ -300,10 +301,10 @@ export default class userController implements IUserController {
     try {
       const id = req.query.id
       const role = req.query.role
-      if (typeof id !== 'string'||typeof role !== 'string') {
+      if (typeof id !== 'string' || typeof role !== 'string') {
         return res.status(400).json({ message: "Invalid ID format" });
       }
-      const getUsers = await this.userUseCase.getUsers(id,role)
+      const getUsers = await this.userUseCase.getUsers(id, role)
       res.status(200).json(getUsers);
     } catch (error) {
       console.log(error);
@@ -384,8 +385,8 @@ export default class userController implements IUserController {
   async sendOwnerDetail(req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>,
     res: Response<any, Record<string, any>>) {
     try {
-      const { sellerId,email, userName ,PropertyDetails} = req.body      
-      const response = await this.userUseCase.sendOwnerDetail(sellerId,email,userName,PropertyDetails)
+      const { sellerId, email, userName, PropertyDetails } = req.body
+      const response = await this.userUseCase.sendOwnerDetail(sellerId, email, userName, PropertyDetails)
       res.status(200).json(response)
     } catch (error) {
       console.log(error);
@@ -394,38 +395,68 @@ export default class userController implements IUserController {
 
 
   async addToWhishlist(req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>,
-    res: Response<any, Record<string, any>>){
-      try {
-        const {userId,propertyId} = req.body
-        const response = await this.userUseCase.addToWhishlist(userId,propertyId)
-        res.status(200).json(response)
-      } catch (error) {
-        console.log(error)
-      }
-  } 
+    res: Response<any, Record<string, any>>) {
+    try {
+      const { userId, propertyId } = req.body
+      const response = await this.userUseCase.addToWhishlist(userId, propertyId)
+      res.status(200).json(response)
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   async removeFromWishlist(req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>,
-    res: Response<any, Record<string, any>>){
-      try {
-        const userId = req.params.userId
-        const propertyId = req.params.propertyId
-        console.log(propertyId,userId)
-        const response = await this.userUseCase.removeFromWhishlist(userId,propertyId)
-        res.status(200).json(response)
-      } catch (error) {
-        console.log(error)
-      }
-  } 
+    res: Response<any, Record<string, any>>) {
+    try {
+      const userId = req.params.userId
+      const propertyId = req.params.propertyId
+      console.log(propertyId, userId)
+      const response = await this.userUseCase.removeFromWhishlist(userId, propertyId)
+      res.status(200).json(response)
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   async getAllWhishlistProperty(req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>,
-    res: Response<any, Record<string, any>>){
-      try {
-        const userId = req.params.userId
-        const response = await this.userUseCase.getAllWhishlistProperty(userId)
-        res.status(200).json(response)
-      } catch (error) {
-        console.log(error)
-      }
+    res: Response<any, Record<string, any>>) {
+    try {
+      const userId = req.params.userId
+      const response = await this.userUseCase.getAllWhishlistProperty(userId)
+      res.status(200).json(response)
+    } catch (error) {
+      console.log(error)
     }
+  }
 
+  async getListingProperty(
+    req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>,
+    res: Response<any, Record<string, any>>
+  ) {
+    try {
+      const search = req.query.search as string
+      const sort = req.query.sort as string ;
+      const filterQuery = req.query.filter;
+      let serachdata = {}
+      let filter: Record<string, any> = {}; 
+
+      if (typeof filterQuery === 'string') {
+        try {
+          filter = JSON.parse(filterQuery);
+        } catch (error) {
+          return res.status(400).json({ error: 'Invalid JSON format for filter' });
+        }
+      } else {
+        return res.status(400).json({ error: 'Filter parameter must be a JSON string' });
+      }
+      if(search){
+          serachdata = JSON.parse(search)
+      }
+      const response = await this.userUseCase.getListingProperty(serachdata, filter, sort);
+      res.status(200).json(response);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'An error occurred while processing your request' });
+    }
+  }
 }

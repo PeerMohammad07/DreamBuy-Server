@@ -13,17 +13,17 @@ export default class userRepository implements IuserRepository {
   private user: Model<IUser>;
   private otp: Model<IOtp>;
   private property: Model<IProperty>;
-  private seller : Model<ISeller>
-  private whishlist : Model<IWhishlist>
-  private revenue : Model<IRevenue>
+  private seller: Model<ISeller>
+  private whishlist: Model<IWhishlist>
+  private revenue: Model<IRevenue>
 
   constructor(
     user: Model<IUser>,
     otp: Model<IOtp>,
     property: Model<IProperty>,
-    seller : Model<ISeller>,
-    whishlist : Model<IWhishlist>,
-    revenue : Model<IRevenue>
+    seller: Model<ISeller>,
+    whishlist: Model<IWhishlist>,
+    revenue: Model<IRevenue>
   ) {
     this.user = user;
     this.otp = otp;
@@ -77,17 +77,17 @@ export default class userRepository implements IuserRepository {
     }
   }
 
-  async getUser(id:string){
+  async getUser(id: string) {
     try {
-      return await this.user.findOne({_id:id})
+      return await this.user.findOne({ _id: id })
     } catch (error) {
       throw Error
     }
   }
 
-  async getSeller(id:string){
+  async getSeller(id: string) {
     try {
-      return await this.seller.findOne({_id:id})
+      return await this.seller.findOne({ _id: id })
     } catch (error) {
       throw Error
     }
@@ -148,7 +148,7 @@ export default class userRepository implements IuserRepository {
 
   async getSaleProperty() {
     try {
-      return await this.property.find({ propertyFor: "sale"  });
+      return await this.property.find({ propertyFor: "sale" });
     } catch (error) {
       throw new Error("Failed to get sale property");
     }
@@ -166,13 +166,13 @@ export default class userRepository implements IuserRepository {
     }
   }
 
-  async updateRevenue(data:IRevenueData){
+  async updateRevenue(data: IRevenueData) {
     try {
       const newRevenue = new this.revenue({
-        userId : data.userId,
-        amount : data.amount,
-        date : data.date,
-        transactionId : data.transactionId
+        userId: data.userId,
+        amount: data.amount,
+        date: data.date,
+        transactionId: data.transactionId
       })
       return await newRevenue.save()
     } catch (error) {
@@ -181,11 +181,11 @@ export default class userRepository implements IuserRepository {
     }
   }
 
-  async updatePremium(id:string,newSubscription:IPremiumSubscription): Promise<IUser | null> {
+  async updatePremium(id: string, newSubscription: IPremiumSubscription): Promise<IUser | null> {
     try {
       return await this.user.findByIdAndUpdate(
         { _id: id },
-        { $set: { isPremium:true ,premiumSubscription: newSubscription }},
+        { $set: { isPremium: true, premiumSubscription: newSubscription } },
         { new: true }
       ).exec();
     } catch (error) {
@@ -193,44 +193,52 @@ export default class userRepository implements IuserRepository {
     }
   }
 
-  async productDetail(id:string){
+  async productDetail(id: string) {
     try {
-      return await this.property.findById({_id:id})
+      return await this.property.findById({ _id: id })
     } catch (error) {
       throw new Error("Failed to get product");
     }
   }
 
-  async addToWhishlist(userId:string,propertyId:string){
+  async addToWhishlist(userId: string, propertyId: string) {
     try {
-      return (await this.whishlist.create({userId,propertyId})).populate("propertyId")
+      return (await this.whishlist.create({ userId, propertyId })).populate("propertyId")
     } catch (error) {
       throw new Error("Failed to add to whishlist");
     }
   }
 
-  async removeFromWhishlist(userId:string,propertyId:string){
+  async removeFromWhishlist(userId: string, propertyId: string) {
     try {
-      return await this.whishlist.deleteOne({userId:userId,propertyId:propertyId})
+      return await this.whishlist.deleteOne({ userId: userId, propertyId: propertyId })
     } catch (error) {
       throw new Error("Failed to remove from whishlist");
     }
   }
 
-  async getAllWhishlistProperty(userId:string){
+  async getAllWhishlistProperty(userId: string) {
     try {
-      return await this.whishlist.find({userId:userId}).populate("propertyId")
+      return await this.whishlist.find({ userId: userId }).populate("propertyId")
     } catch (error) {
       throw new Error("Failder to get all whishlist property")
     }
   }
 
-  async whishlistPropertyExist(userId:string,propertyId:string){
+  async whishlistPropertyExist(userId: string, propertyId: string) {
     try {
-      return await this.whishlist.findOne({userId:userId,propertyId:propertyId})
+      return await this.whishlist.findOne({ userId: userId, propertyId: propertyId })
     } catch (error) {
       throw new Error("Failder to get all whishlist property")
     }
   }
 
+  async getListinProperty(query: any) {
+    try {
+      return await this.property.aggregate(query)
+    } catch (error) {
+      console.log(error)
+      throw new Error("Failde to get listing property")
+    }
+  }
 }

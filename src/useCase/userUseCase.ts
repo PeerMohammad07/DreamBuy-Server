@@ -263,17 +263,17 @@ export default class userUseCase implements IuserUseCase {
     } catch (error) { }
   }
 
-  async getUsers(id:string,role:string){
+  async getUsers(id: string, role: string) {
     try {
-      if(role=='user'){        
+      if (role == 'user') {
         return await this.userRepository.getSeller(id)
-      }else{
+      } else {
         return await this.userRepository.getUser(id)
       }
     } catch (error) {
       console.log(error);
       return null
-    } 
+    }
   }
 
   async getRentProperty() {
@@ -299,13 +299,13 @@ export default class userUseCase implements IuserUseCase {
   async updateUser(id: string, name: string, image: string, type: string) {
     try {
       let url = image;
-      if(!image.includes('https://dreambuy')){
+      if (!image.includes('https://dreambuy')) {
         const sharpedImage = await sharpImage(2000, 2000, image);
         const imageName = await randomImageName();
         if (sharpedImage) {
           await sendObjectToS3(imageName, type, sharpedImage);
         }
-         url = await createImageUrl(imageName);
+        url = await createImageUrl(imageName);
       }
       const response = await this.userRepository.updateUser(id, name, url)
       if (response) {
@@ -341,7 +341,7 @@ export default class userUseCase implements IuserUseCase {
 
   async updatePremium(id: string, type: string) {
     try {
-      let amount ;
+      let amount;
       const startDate = new Date();
       let expiryDate = new Date();
       if (type === 'weekly') {
@@ -357,15 +357,15 @@ export default class userUseCase implements IuserUseCase {
         throw new Error("Invalid subscription type");
       }
 
-      const user =  await this.userRepository.checkUserExists(id)
-      if(user&&user.isPremium&&user.premiumSubscription?.expiryDate){
-        if(user.premiumSubscription?.subscriptionType == "weekly"){
+      const user = await this.userRepository.checkUserExists(id)
+      if (user && user.isPremium && user.premiumSubscription?.expiryDate) {
+        if (user.premiumSubscription?.subscriptionType == "weekly") {
           amount = 199
           expiryDate.setDate(user.premiumSubscription.expiryDate.getDate() + 7);
-        }else if(user.premiumSubscription?.subscriptionType == "monthly"){
+        } else if (user.premiumSubscription?.subscriptionType == "monthly") {
           amount = 299
           expiryDate.setDate(user.premiumSubscription.expiryDate.getMonth() + 1);
-        }else if(user.premiumSubscription?.subscriptionType == "three_months"){
+        } else if (user.premiumSubscription?.subscriptionType == "three_months") {
           amount = 799
           expiryDate.setDate(user.premiumSubscription.expiryDate.getMonth() + 3);
         }
@@ -381,10 +381,10 @@ export default class userUseCase implements IuserUseCase {
 
       const transactionId = updatedUser?._id.toString()
       const revenueData = {
-        transactionId : transactionId ,
-        userId : id,
+        transactionId: transactionId,
+        userId: id,
         amount,
-        date : startDate
+        date: startDate
       }
       await this.userRepository.updateRevenue(revenueData)
       return updatedUser
@@ -408,14 +408,14 @@ export default class userUseCase implements IuserUseCase {
     }
   }
 
-  async sendOwnerDetail(sellerId:string,email:string,name:string,property:IProperty){
+  async sendOwnerDetail(sellerId: string, email: string, name: string, property: IProperty) {
     try {
       const seller = await this.userRepository.checkSellerExists(sellerId)
-      if(!seller){
-        return {status:false,message : "seller doesnt exist with this id"}
-      }      
-       await sendEmailOwnerDetails(email,name,seller,property)
-      return {status:true,message : "Email sended succesfully"}
+      if (!seller) {
+        return { status: false, message: "seller doesnt exist with this id" }
+      }
+      await sendEmailOwnerDetails(email, name, seller, property)
+      return { status: true, message: "Email sended succesfully" }
     } catch (error) {
       console.log(error);
       return null
@@ -423,39 +423,116 @@ export default class userUseCase implements IuserUseCase {
   }
 
 
-  async addToWhishlist(userId:string,propertyId:string){
+  async addToWhishlist(userId: string, propertyId: string) {
     try {
-      const exist = await this.userRepository.whishlistPropertyExist(userId,propertyId)
-      if(exist){
-        return {status:true,message:"Already in the wishlist",data:exist}
+      const exist = await this.userRepository.whishlistPropertyExist(userId, propertyId)
+      if (exist) {
+        return { status: true, message: "Already in the wishlist", data: exist }
       }
-      const response = await this.userRepository.addToWhishlist(userId,propertyId)
-      if(response){
-        return {status:true,message:"Property added to whishlist",data:response}
+      const response = await this.userRepository.addToWhishlist(userId, propertyId)
+      if (response) {
+        return { status: true, message: "Property added to whishlist", data: response }
       }
-      return {status:false,message:"Failed to add wishlist"}
+      return { status: false, message: "Failed to add wishlist" }
     } catch (error) {
       console.log(error)
       return null
     }
   }
 
-  async removeFromWhishlist(userId:string,propertyId:string){
+  async removeFromWhishlist(userId: string, propertyId: string) {
     try {
-      const response =  await this.userRepository.removeFromWhishlist(userId,propertyId)
-      if(response.deletedCount>=1){
-        return {status:true,message:"Removed property from whishlist"}
+      const response = await this.userRepository.removeFromWhishlist(userId, propertyId)
+      if (response.deletedCount >= 1) {
+        return { status: true, message: "Removed property from whishlist" }
       }
-      return {status:false,message:"Failed to remove from whishilist"}
+      return { status: false, message: "Failed to remove from whishilist" }
     } catch (error) {
       console.log(error)
       return null
     }
   }
 
-  async getAllWhishlistProperty(userId:string){
+  async getAllWhishlistProperty(userId: string) {
     try {
       return await this.userRepository.getAllWhishlistProperty(userId)
+    } catch (error) {
+      console.log(error)
+      return null
+    }
+  }
+
+  async getListingProperty(search: any, filter: any, sort: any) {
+    try {
+      const pipeline: any[] = [];
+
+      if (search && search.latitude && search.longitude) {
+        pipeline.push({
+          $geoNear: {
+            near: {
+              type: "Point",
+              coordinates: [Number(search.longitude), Number(search.latitude)],
+            },
+            distanceField: "dist.calculated",
+            maxDistance: 10000000, 
+            spherical: true,
+          },
+        });
+      }
+
+      const matchStage: any = { propertyStatus: false };
+
+      if (filter) {
+        if (filter.propertyFor) {
+          matchStage['propertyFor'] = filter.propertyFor;
+        }
+
+        if (filter.bedrooms) {
+          matchStage['noOfBedroom'] = filter.bedrooms.slice(0, 1);
+        }
+
+        if (filter.bathrooms) {
+          matchStage['noOfBathroom'] = filter.bathrooms.slice(0, 1);
+        }
+
+        if (filter.priceRange) {
+          matchStage['Price'] = { $gte: `${filter.priceRange[0]}`, $lte: `${filter.priceRange[1]}` };
+        }
+
+        if (filter.category) {
+          matchStage['propertyType'] = filter.category;
+        }
+
+        if (filter.sqft) {
+          matchStage['sqft'] = filter.sqft;
+        }
+
+        if (filter.amenities && filter.amenities.length > 0) {
+          matchStage['features'] = { $in: filter.amenities };
+        }
+      }
+
+      pipeline.push({ $match: matchStage });
+
+      // Sorting stage
+      if (sort) {
+        const sortStage: any = {};
+        if (sort === 'priceAsc') {
+          sortStage['Price'] = 1;
+        } else if (sort === 'priceDesc') {
+          sortStage['Price'] = -1;
+        } else if (sort === 'dateDesc') {
+          sortStage['createdAt'] = -1;
+        } else if (sort === 'dateAsc') {
+          sortStage['createdAt'] = 1;
+        }
+        pipeline.push({ $sort: sortStage });
+      }
+
+      console.log(JSON.stringify(pipeline), "pipeline");
+      const propertys = await this.userRepository.getListinProperty(pipeline)
+      console.log(propertys)
+      return propertys
     } catch (error) {
       console.log(error)
       return null

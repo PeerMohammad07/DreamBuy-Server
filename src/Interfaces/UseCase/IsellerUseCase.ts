@@ -27,7 +27,11 @@ export interface PropertyData {
   features: string[];
   description: string;
   images: { base64String: string; fileName: string; fileType: string }[];
-  location: string;
+  location: {
+    location:string,
+    longitude : number
+    latitude:number
+  },
   sellerId: string
 };
 
@@ -62,7 +66,11 @@ export interface Property {
   features: string[];
   description: string;
   images: string[];
-  location: string;
+  location: {
+    location:string,
+    longitude : number
+    latitude:number
+  };
   sellerId: string
 };
 

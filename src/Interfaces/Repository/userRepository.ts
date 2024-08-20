@@ -3,6 +3,7 @@ import IUser, { IProperty, IRevenue, ISeller, IWhishlist } from "../../entity/al
 import { IregisterBody } from "../Controller/IUserController";
 import { googleLoginData, Itoken } from "../UseCase/IuserUseCase";
 import { DeleteResult } from 'mongodb';
+import { Property } from "../UseCase/IsellerUseCase";
 
 export interface IotpData {
   _id : string
@@ -47,4 +48,5 @@ export default interface IuserRepository{
   getAllWhishlistProperty(userId:string):Promise<IWhishlist[]>
   whishlistPropertyExist(userId:string,propertyId:string):Promise<IWhishlist|null>
   updateRevenue(data:IRevenueData):Promise<IRevenue>
+  getListinProperty(query:any):Promise<IProperty[]>
 }

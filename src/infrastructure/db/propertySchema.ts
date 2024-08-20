@@ -32,8 +32,8 @@ const propertySchema = new Schema({
     required: true,
   },
   features: {
-    type: Array,
-    requried: true,
+    type: [String],
+    required: true,
   },
   noOfBedroom: {
     type: String,
@@ -59,22 +59,34 @@ const propertySchema = new Schema({
     longitude: {
       type: Number,
       required: true,
-    }
+    },
+  },
+  locationCoordinates: {
+    type: {
+      type: String, 
+      enum: ['Point'], 
+      required: true,
+    },
+    coordinates: {
+      type: [Number], 
+      required: true,
+    },
   },
   Price: {
-    type: String,
+    type: String, 
     required: true,
   },
   propertyImage: {
-    type: Array,
+    type: [String],
     required: true,
   },
   sqft: {
     type: String,
-    requried: true,
+    required: true,
   },
-},{timestamps:true});
+}, { timestamps: true });
 
+propertySchema.index({ locationCoordinates: '2dsphere' });
 
-const property = mongoose.model<IProperty>('Property',propertySchema)
-export default property
+const Property = mongoose.model<IProperty>('Property', propertySchema);
+export default Property;

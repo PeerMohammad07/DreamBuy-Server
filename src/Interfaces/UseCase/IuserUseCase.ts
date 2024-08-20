@@ -71,4 +71,5 @@ export default interface IuserUseCase{
   removeFromWhishlist(userId:string,propertyId:string):Promise<returnMessage|null>
   addToWhishlist(userId:string,propertyId:string):Promise<returnMessage|null>
   getAllWhishlistProperty(userId:string):Promise<IWhishlist[]|null>
+  getListingProperty(search:any,filter:any,sort:any):Promise<null|IProperty[]>
 }

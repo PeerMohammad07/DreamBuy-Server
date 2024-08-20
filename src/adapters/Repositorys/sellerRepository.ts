@@ -143,7 +143,6 @@ export default class SellerRepository implements ISellerRepository {
 
   async addProperty(data: Property) {
     try {
-      console.log(data,"data");
       
       const property = new this.property({
         propertyName: data.propertyName,
@@ -160,6 +159,10 @@ export default class SellerRepository implements ISellerRepository {
         Price: data.expectedPrice,
         propertyImage: data.images,
         sqft:data.sqft,
+        locationCoordinates: {
+          type: "Point", 
+          coordinates: [data.location.longitude, data.location.latitude], 
+        },
       });
       return await property.save();
     } catch (error) {

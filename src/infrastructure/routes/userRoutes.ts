@@ -65,4 +65,6 @@ userRouter.patch('/updatePremium',userAuth,UserController.updatePremium)
 
 userRouter.post('/sendOwnerDetail',userAuth,UserController.sendOwnerDetail)
 
+userRouter.get('/listProeprty',userAuth,UserController.getListingProperty)
+
 export default userRouter;

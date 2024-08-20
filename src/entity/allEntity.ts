@@ -84,7 +84,7 @@ interface location {
 }
 
 export interface IProperty extends Document {
-  _id : string
+  _id: string;
   propertyName: string;
   sellerId: string;
   propertyStatus: boolean;
@@ -93,13 +93,21 @@ export interface IProperty extends Document {
   state: string;
   city: string;
   features: string[];
-  bedroom: string;
-  bathroom: number;
+  noOfBedroom: string; 
+  noOfBathroom: number; 
   description: string;
-  location: location;
-  Price: number;
+  location: {
+    location: string;
+    latitude: number;
+    longitude: number;
+  };
+  locationCoordinates: {
+    type: 'Point';
+    coordinates: [number, number]; 
+  };
+  Price: string;
   propertyImage: string[];
-  sqft: number;
+  sqft: string; 
 }
 
 
