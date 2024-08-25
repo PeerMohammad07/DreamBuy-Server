@@ -83,6 +83,7 @@ interface location {
   longitude:number
 }
 
+
 export interface IProperty extends Document {
   _id: string;
   propertyName: string;
@@ -93,8 +94,8 @@ export interface IProperty extends Document {
   state: string;
   city: string;
   features: string[];
-  noOfBedroom: string; 
-  noOfBathroom: number; 
+  noOfBedroom: string;
+  noOfBathroom: number;
   description: string;
   location: {
     location: string;
@@ -103,12 +104,18 @@ export interface IProperty extends Document {
   };
   locationCoordinates: {
     type: 'Point';
-    coordinates: [number, number]; 
+    coordinates: [number, number];
   };
   Price: string;
   propertyImage: string[];
-  sqft: string; 
+  sqft: string;
+  isBoosted: boolean; 
+  boostDetails?: { 
+    expiryDate?: Date;
+    boostLevel?: '1 week' | '1 month' | '3 month';
+  };
 }
+
 
 
 export interface ICategory extends Document {

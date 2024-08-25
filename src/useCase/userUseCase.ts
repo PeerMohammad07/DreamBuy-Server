@@ -14,6 +14,30 @@ import sendEmailOwnerDetails from "../infrastructure/utils/sendSellerDetails";
 import { IProperty } from "../entity/allEntity";
 import { IPushNotificationRepository } from "../Interfaces/Repository/pushNotificatio";
 
+
+interface SearchParams {
+  latitude?: number;
+  longitude?: number;
+}
+
+export interface locationSearch {
+  location : string
+  cordinates : [number,number]
+}
+
+interface FilterParams {
+  propertyFor?: string;
+  bedrooms?: number[];
+  bathrooms?: number[];
+  priceRange?: [number, number];
+  category?: string;
+  sqft?: number;
+  amenities?: string[];
+}
+
+type SortOption = 'priceAsc' | 'priceDesc' | 'dateAsc' | 'dateDesc';
+
+
 export default class userUseCase implements IuserUseCase {
   private userRepository: IuserRepository;
   private hashingService: IhashingService;
@@ -339,6 +363,8 @@ export default class userUseCase implements IuserUseCase {
     }
   }
 
+
+
   async updatePremium(id: string, type: string) {
     try {
       let amount;
@@ -462,80 +488,86 @@ export default class userUseCase implements IuserUseCase {
     }
   }
 
-  async getListingProperty(search: any, filter: any, sort: any) {
+  async getListingProperty(search: SearchParams, filter: FilterParams, sort: SortOption, locationSearch: locationSearch) {
     try {
       const pipeline: any[] = [];
+      const sortStage: any = {};
 
-      if (search && search.latitude && search.longitude) {
+      // Geo-Spatial Search
+      if (locationSearch) {
+        console.log(locationSearch,"locationSearhc ")
         pipeline.push({
           $geoNear: {
             near: {
               type: "Point",
-              coordinates: [Number(search.longitude), Number(search.latitude)],
+              coordinates: locationSearch.cordinates,
             },
             distanceField: "dist.calculated",
-            maxDistance: 10000000, 
+            maxDistance: 20 * 1000,
             spherical: true,
           },
         });
+        sortStage['dist.calculated'] = 1; 
+      } else if (search.latitude && search.longitude) {
+        console.log(search.latitude,search.longitude,"hehe ennada tih")
+        pipeline.push({
+          $geoNear: {
+            near: {
+              type: "Point",
+              coordinates: [search.longitude, search.latitude],
+            },
+            distanceField: "dist.calculated",
+            maxDistance: 10000 * 1000,  // 100000 km
+            spherical: true,
+          },
+        });
+        sortStage['dist.calculated'] = 1;
+      }else{
+        // No need to do anything realted to location 
       }
 
+
+      // Filtering
       const matchStage: any = { propertyStatus: false };
 
       if (filter) {
-        if (filter.propertyFor) {
-          matchStage['propertyFor'] = filter.propertyFor;
-        }
-
-        if (filter.bedrooms) {
-          matchStage['noOfBedroom'] = filter.bedrooms.slice(0, 1);
-        }
-
-        if (filter.bathrooms) {
-          matchStage['noOfBathroom'] = filter.bathrooms.slice(0, 1);
-        }
-
-        if (filter.priceRange) {
-          matchStage['Price'] = { $gte: `${filter.priceRange[0]}`, $lte: `${filter.priceRange[1]}` };
-        }
-
-        if (filter.category) {
-          matchStage['propertyType'] = filter.category;
-        }
-
-        if (filter.sqft) {
-          matchStage['sqft'] = filter.sqft;
-        }
-
-        if (filter.amenities && filter.amenities.length > 0) {
-          matchStage['features'] = { $in: filter.amenities };
-        }
+        if (filter.propertyFor) matchStage['propertyFor'] = filter.propertyFor;
+        if (filter.bedrooms) matchStage['noOfBedroom'] = filter.bedrooms[0];
+        if (filter.bathrooms) matchStage['noOfBathroom'] = filter.bathrooms[0];
+        if (filter.priceRange) matchStage['Price'] = { $gte: `${filter.priceRange[0]}`, $lte: `${filter.priceRange[1]}` };
+        if (filter.category) matchStage['propertyType'] = filter.category;
+        if (filter.sqft) matchStage['sqft'] = filter.sqft;
+        if (filter.amenities && filter.amenities.length > 0) matchStage['features'] = { $in: filter.amenities };
       }
 
       pipeline.push({ $match: matchStage });
 
-      // Sorting stage
+      // Sorting
       if (sort) {
-        const sortStage: any = {};
-        if (sort === 'priceAsc') {
-          sortStage['Price'] = 1;
-        } else if (sort === 'priceDesc') {
-          sortStage['Price'] = -1;
-        } else if (sort === 'dateDesc') {
-          sortStage['createdAt'] = -1;
-        } else if (sort === 'dateAsc') {
-          sortStage['createdAt'] = 1;
+        switch (sort) {
+          case 'priceAsc':
+            sortStage['Price'] = 1;
+            break;
+          case 'priceDesc':
+            sortStage['Price'] = -1;
+            break;
+          case 'dateDesc':
+            sortStage['createdAt'] = -1;
+            break;
+          case 'dateAsc':
+            sortStage['createdAt'] = 1;
+            break;
         }
         pipeline.push({ $sort: sortStage });
       }
 
       console.log(JSON.stringify(pipeline), "pipeline");
-      const propertys = await this.userRepository.getListinProperty(pipeline)
-      console.log(propertys)
-      return propertys
+      const properties = await this.userRepository.getListinProperty(pipeline);
+      console.log(properties);
+      return properties;
     } catch (error) {
-      console.log(error)
-      return null
+      console.error('Error fetching properties:', error);
+      return null;
     }
   }
 }

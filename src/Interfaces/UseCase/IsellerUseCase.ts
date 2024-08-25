@@ -91,4 +91,6 @@ export default interface ISellerUsecase {
   getMyProperty(id:string):Promise<IProperty[]|null>
   deleteProperty(id:string):Promise<returnMessage|null>
   updateProeprty(data:IupdatePropertyData):Promise<returnMessage|null>
+  getBoostProperty(planId:string,duration:string,propertyId:string):Promise<null>
+  boostProperty(propertyId:string,type:string):Promise<returnMessage|null>
 }

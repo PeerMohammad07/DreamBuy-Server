@@ -1,25 +1,30 @@
 import { Model } from "mongoose";
-import { IOtp, IProperty, ISeller } from "../../entity/allEntity";
+import { IOtp, IProperty, IRevenue, ISeller } from "../../entity/allEntity";
 import ISellerRepository from "../../Interfaces/Repository/sellerRepository";
 import { IregisterData } from "../../useCase/sellerUseCase";
 import {
   Property,
   PropertyData,
 } from "../../Interfaces/UseCase/IsellerUseCase";
+import { IRevenueData } from "../../Interfaces/Repository/userRepository";
 
 export default class SellerRepository implements ISellerRepository {
   private seller: Model<ISeller>;
   private otp: Model<IOtp>;
   private property: Model<IProperty>;
+  private revenue : Model<IRevenue>
 
   constructor(
     seller: Model<ISeller>,
     otp: Model<IOtp>,
-    property: Model<IProperty>
+    property: Model<IProperty>,
+    revenue : Model<IRevenue>
   ) {
     this.seller = seller;
     this.otp = otp;
     this.property = property;
+    this.revenue = revenue
+    
   }
 
   async checkEmailExists(email: string) {
@@ -206,4 +211,32 @@ export default class SellerRepository implements ISellerRepository {
       return null
     }
   }
+
+  async boostPropert(id:string,boostDetails:any){
+    try {
+      return await this.property.findByIdAndUpdate(
+        {_id:id},
+        {$set:{isBoosted:true,boostDetails}}
+      )
+    } catch (error) {
+      console.log(error)
+      return null
+    }
+  }
+
+  async updateRevenue(data: IRevenueData) {
+    try {
+      const newRevenue = new this.revenue({
+        userId: data.userId,
+        amount: data.amount,
+        date: data.date,
+        transactionId: data.transactionId
+      })
+      return await newRevenue.save()
+    } catch (error) {
+      console.log(error)
+      throw new Error("Failed to create revenue");
+    }
+  }
+  
 }

@@ -24,6 +24,8 @@ export default class SellerController implements ISellerController {
     this.getMyProperty = this.getMyProperty.bind(this)
     this.deleteProeprty = this.deleteProeprty.bind(this)
     this.updateProeprty = this.updateProeprty.bind(this)
+    this.getBoostProperty = this.getBoostProperty.bind(this)
+    this.boostProperty = this.boostProperty.bind(this)
   }
 
   async register(
@@ -346,6 +348,28 @@ export default class SellerController implements ISellerController {
         res.status(200).json(response)
       } catch (error) {
         console.log(error);
+      }
+  }
+
+  async getBoostProperty(req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>,
+    res: Response<any, Record<string, any>>) {
+    try {
+      const { planId,duration ,propertyId} = req.body
+      const session = await this.sellerUseCase.getBoostProperty(planId,duration,propertyId)
+      res.status(200).json({ session })
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async boostProperty(req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>,
+    res: Response<any, Record<string, any>>){
+      try {
+        const {propertyId,type} = req.body
+        const response = await this.sellerUseCase.boostProperty(propertyId,type)
+        res.status(200).json({response})
+      } catch (error) {
+        console.log(error)
       }
   }
 }

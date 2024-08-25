@@ -2,6 +2,7 @@ import { CronJob } from 'cron';
 import UserModel from '../db/userSchema';
 import moment from 'moment';
 import sendEmailPremiumExpiration from './expirationEmail';
+import Property from '../db/propertySchema';
 
 const job = new CronJob(
   '0 12 * * *',
@@ -12,6 +13,8 @@ const job = new CronJob(
     const tomorrow = moment().add(1, 'day').startOf('day');
 
     try {
+
+      // user premium removing
       const expiringSoon = await UserModel.find({
         'premiumSubscription.expiryDate': {
           $gte: tomorrow.toDate(),
@@ -36,8 +39,19 @@ const job = new CronJob(
           }
         }
       );
-      console.log(expiredSubscriptions);
       
+      // property boost removing
+      const expiredBoostProperty = await Property.updateMany({
+        'boostDetails.expiryDate' : {$lt : today.toDate()}
+      },
+      {
+        $set: {
+          isBoosted: false,
+          boostDetails: null
+        }
+      })
+
+      console.log(expiredBoostProperty,"boosted property expired")
     } catch (error) {
       console.error('Error checking subscriptions:', error);
     }

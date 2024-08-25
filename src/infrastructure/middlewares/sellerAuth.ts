@@ -6,9 +6,10 @@ import OtpModel from "../db/otpSchema";
 import property from "../db/propertySchema";
 import SellerRepository from "../../adapters/Repositorys/sellerRepository";
 import Seller from "../db/sellerSchema";
+import RevenueModel from "../db/revenueSchema";
 
 const jwtService = new JwtToken()
-const sellerRepo = new SellerRepository(Seller, OtpModel, property)
+const sellerRepo = new SellerRepository(Seller, OtpModel, property,RevenueModel)
 
 interface IAuthRequest extends Request {
   userId?: string;

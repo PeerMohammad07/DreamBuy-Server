@@ -6,6 +6,7 @@ import { Request, response, Response } from "express";
 import { ParamsDictionary } from "express-serve-static-core";
 import { ParsedQs } from "qs";
 import { avatarImage } from "../../infrastructure/utils/avatarImae";
+import userAuth from "../../infrastructure/middlewares/userAuth";
 
 export default class userController implements IUserController {
   private userUseCase: IuserUseCase;
@@ -359,6 +360,8 @@ export default class userController implements IUserController {
     }
   }
 
+  
+
   async updatePremium(req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>,
     res: Response<any, Record<string, any>>) {
     try {
@@ -428,7 +431,7 @@ export default class userController implements IUserController {
       console.log(error)
     }
   }
-
+  
   async getListingProperty(
     req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>,
     res: Response<any, Record<string, any>>
@@ -437,6 +440,8 @@ export default class userController implements IUserController {
       const search = req.query.search as string
       const sort = req.query.sort as string ;
       const filterQuery = req.query.filter;
+      let locSearch = req.query.locationSearch as string
+      locSearch = JSON.parse(locSearch)
       let serachdata = {}
       let filter: Record<string, any> = {}; 
 
@@ -452,7 +457,7 @@ export default class userController implements IUserController {
       if(search){
           serachdata = JSON.parse(search)
       }
-      const response = await this.userUseCase.getListingProperty(serachdata, filter, sort);
+      const response = await this.userUseCase.getListingProperty(serachdata, filter, sort,locSearch);
       res.status(200).json(response);
     } catch (error) {
       console.error(error);

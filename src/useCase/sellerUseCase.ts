@@ -407,4 +407,66 @@ export default class SellerUseCase implements ISellerUsecase {
     }
   }
   
+
+  async getBoostProperty(planId:string,duration:string,propertyId:string){
+    try {
+      const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+      const subscriptionType = duration
+      const session = await stripe.checkout.sessions.create({
+        mode: 'subscription',
+        line_items: [
+          {
+            price: planId,
+            quantity: 1,
+          },
+        ],
+        success_url: `${process.env.CLIENT_SIDE_URL}seller/paymentStatus/?status=true&type=${subscriptionType}&id=${propertyId}`,
+        cancel_url: `${process.env.CLIENT_SIDE_URL}seller/paymentStatus/?status=false`,
+      });
+      return session
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async boostProperty(propertyId: string, type: string) {
+    try {
+      const startDate = new Date();
+      let expiryDate = new Date();
+      let amount = 0
+      if (type === '1 Week') {
+        amount = 99
+        expiryDate.setDate(startDate.getDate() + 7);
+      } else if (type === '1 Month') {
+        amount = 299
+        expiryDate.setMonth(startDate.getMonth() + 1);
+      } else if (type === '3 Months') {
+        amount = 999
+        expiryDate.setMonth(startDate.getMonth() + 3);
+      } else {
+        throw new Error("Invalid subscription type");
+      }
+
+
+      const newBoost = {
+        boostLevel: type,
+        expiryDate: expiryDate
+      };
+
+      const updatedProperty = await this.sellerRepository.boostPropert(propertyId, newBoost)
+
+      const transactionId = propertyId.toString()
+      const revenueData = {
+        transactionId: transactionId,
+        userId: propertyId,
+        amount,
+        date: startDate
+      }
+      await this.sellerRepository.updateRevenue(revenueData)
+      return {status:true,message:"boosted property",data:updatedProperty}
+    } catch (error) {
+      console.log(error);
+      return null
+    }
+  }
 }

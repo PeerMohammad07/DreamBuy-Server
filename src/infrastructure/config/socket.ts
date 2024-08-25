@@ -37,12 +37,18 @@ export default function socketConnection(server: any) {
     });
 
     socket.on('message', (message: any, id: string) => {
-      console.log("socket")
       const user = getUser(id);
       if (user) {
         io.to(user.socketId).emit("messageContent", message);
       }
     });
+
+    socket.on("call:start",({senderId,receiverId})=>{
+      const receiverData = getUser(receiverId)
+      if(receiverData){
+        io.to(receiverData.socketId).emit("call:start",senderId)
+      }
+    })
 
     socket.on("disconnect", () => {
       console.log("Socket disconnected");

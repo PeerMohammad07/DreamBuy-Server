@@ -11,13 +11,14 @@ import OtpService from "../utils/otpService";
 import JwtToken from "../utils/jwtService";
 import property from "../db/propertySchema";
 import sellerAuth from "../middlewares/sellerAuth";
+import RevenueModel from "../db/revenueSchema";
 
 const sellerRouter: Router = express.Router();
 
 const jwtService = new JwtToken();
 const otpService = new OtpService();
 const hashingService = new HashingService();
-const sellerRepository = new SellerRepository(Seller, OtpModel, property);
+const sellerRepository = new SellerRepository(Seller, OtpModel, property,RevenueModel);
 const sellerUseCase = new SellerUseCase(
   sellerRepository,
   hashingService,
@@ -46,8 +47,10 @@ sellerRouter.post("/addProperty", sellerAuth, sellerController.addProperty);
 sellerRouter.post('/deleteProperty',sellerAuth,sellerController.deleteProeprty)
 sellerRouter.put('/updateProperty',sellerAuth,sellerController.updateProeprty)
 
-
 sellerRouter.get("/getMyProperty/:id",sellerAuth,sellerController.getMyProperty)
 
+sellerRouter.route('/boostProperty')
+.post(sellerAuth,sellerController.getBoostProperty)
+.patch(sellerAuth,sellerController.boostProperty)
 
 export default sellerRouter;

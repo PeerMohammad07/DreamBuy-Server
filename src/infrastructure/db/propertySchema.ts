@@ -84,6 +84,21 @@ const propertySchema = new Schema({
     type: String,
     required: true,
   },
+  isBoosted: { 
+    type: Boolean,
+    default: false,
+  },
+  boostDetails: { 
+    expiryDate: {
+      type: Date,
+      required: false,
+    },
+    boostLevel: { 
+      type: String,
+      enum: ['1 week', '1 month', '3 month'],
+      required: false,
+    },
+  },
 }, { timestamps: true });
 
 propertySchema.index({ locationCoordinates: '2dsphere' });
