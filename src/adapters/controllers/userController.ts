@@ -161,7 +161,7 @@ export default class userController implements IUserController {
         !response?.status &&
         response?.message == "this user is blocked"
       ) {
-        res.status(403).json({ message: "this user is blocked" });
+        res.status(403).json({ message: "This user is blocked" });
       } else if (response?.status) {
         res.status(200).json(response);
       } else if (

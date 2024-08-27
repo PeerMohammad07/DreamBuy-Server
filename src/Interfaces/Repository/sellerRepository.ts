@@ -23,5 +23,5 @@ export default interface ISellerRepository {
   updateProperty(data:any):Promise<IProperty|null>
   boostPropert(id:string,boostDetails:any):Promise<IProperty|null>
   updateRevenue(data: IRevenueData):Promise<IRevenue|null>
-
+  getProperty(propertyId:string):Promise<IProperty|null>
 }

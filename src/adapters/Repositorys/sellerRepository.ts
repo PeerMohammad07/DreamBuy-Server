@@ -239,4 +239,13 @@ export default class SellerRepository implements ISellerRepository {
     }
   }
   
+
+  async getProperty(propertyId:string){
+    try {
+      return await this.property.findOne({_id:propertyId})
+    } catch (error) {
+      console.log(error)
+      throw new Error("Failed to check proerty boosted");
+    }
+  }
 }

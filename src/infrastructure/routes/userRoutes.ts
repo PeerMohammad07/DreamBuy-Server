@@ -51,14 +51,14 @@ userRouter.post('/productDetail',UserController.productDetail)
 
 userRouter.get('/getUser',UserController.getUser)
 
-userRouter.get('/whishlist/:userId',userAuth,UserController.getAllWhishlistProperty)
+userRouter.get('/whishlist/:userId',UserController.getAllWhishlistProperty)
 userRouter.post('/whishlist',userAuth,UserController.addToWhishlist)
 userRouter.delete('/whishlist/:userId/:propertyId',userAuth,UserController.removeFromWishlist)
 
 userRouter.get("/getRentProperty", UserController.getRentProperty);
 userRouter.get("/getSaleProperty", UserController.getSaleProperty);
 
-userRouter.put('/updateUser', UserController.updateUser)
+userRouter.put('/updateUser',userAuth,UserController.updateUser)
 
 userRouter.patch('/getPremium',userAuth,UserController.getPremium)
 userRouter.patch('/updatePremium',userAuth,UserController.updatePremium)
@@ -66,5 +66,6 @@ userRouter.patch('/updatePremium',userAuth,UserController.updatePremium)
 userRouter.post('/sendOwnerDetail',userAuth,UserController.sendOwnerDetail)
 
 userRouter.get('/listProeprty',UserController.getListingProperty)
+
 
 export default userRouter;

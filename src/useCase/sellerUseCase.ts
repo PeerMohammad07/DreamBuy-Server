@@ -410,6 +410,12 @@ export default class SellerUseCase implements ISellerUsecase {
 
   async getBoostProperty(planId:string,duration:string,propertyId:string){
     try {
+      const property = await this.sellerRepository.getProperty(propertyId)
+      if(!property){
+        return {status:false,message:"property doesn't exist"}
+      }else if(property.isBoosted){
+        return {status:false,message:"property already boosted"}
+      } 
       const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
       const subscriptionType = duration
       const session = await stripe.checkout.sessions.create({

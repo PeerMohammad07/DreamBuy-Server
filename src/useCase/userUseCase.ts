@@ -424,6 +424,9 @@ export default class userUseCase implements IuserUseCase {
     try {
       const response = await this.userRepository.productDetail(id)
       if (response) {
+        if(response.propertyStatus){
+          return { message: "Property has been blocked", status: false, data: response }
+        }
         return { message: "productDetails got successfully", status: true, data: response }
       } else {
         return { message: "something went wrong", status: false }

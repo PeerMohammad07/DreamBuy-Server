@@ -3,17 +3,21 @@ import IchatUseCase from "../../Interfaces/UseCase/IchatUsecase";
 import { Request, Response } from "express";
 import { ParamsDictionary } from "express-serve-static-core";
 import { ParsedQs } from "qs";
+import IGeminiChatbot from "../../Interfaces/Utils/IGeminiChatbot";
 
 export default class chatController implements IChatController {
   private chatUseCase;
+  private geminiChatBot
 
-  constructor(chatUseCase: IchatUseCase) {
+  constructor(chatUseCase: IchatUseCase,geminiChatBot:IGeminiChatbot) {
     this.chatUseCase = chatUseCase;
+    this.geminiChatBot = geminiChatBot
     this.getConversations = this.getConversations.bind(this);
     this.sendMessage = this.sendMessage.bind(this);
     this.getMessage = this.getMessage.bind(this);
     this.createConversation = this.createConversation.bind(this)
     this.uploadChatFile = this.uploadChatFile.bind(this)
+    this.sendMessageAi = this.sendMessageAi.bind(this)
   }
 
   async getConversations(
@@ -97,6 +101,18 @@ export default class chatController implements IChatController {
     } catch (error) {
       console.log(error);
       res.status(500).json({ message: "Internal server error" });
+    }
+  }
+
+  async sendMessageAi(req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>,
+    res: Response<any, Record<string, any>>){
+    try {
+      const {text} = req.body
+      const response = await this.geminiChatBot.sendMessage(text)
+      console.log(response)
+      res.status(200).json(response)
+    } catch (error) {
+      
     }
   }
 }
