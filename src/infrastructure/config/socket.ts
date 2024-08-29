@@ -36,12 +36,14 @@ export default function socketConnection(server: any) {
       io.emit('getUser', users); // Send updated users list to all clients
     });
 
-    socket.on('message', (message: any, id: string) => {
+    socket.on('message', (message: any, id: string,name:string,senderId) => {
       const user = getUser(id);
       if (user) {
         io.to(user.socketId).emit("messageContent", message);
+        io.to(user.socketId).emit("notification",name,senderId)
       }
     });
+
 
     socket.on("call:start",({senderId,receiverId})=>{
       const receiverData = getUser(receiverId)

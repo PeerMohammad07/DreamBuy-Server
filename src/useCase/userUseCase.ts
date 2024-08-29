@@ -138,7 +138,7 @@ export default class userUseCase implements IuserUseCase {
         if (value.isBlocked) {
           return {
             status: false,
-            message: "this user is blocked ",
+            message: "This user is blocked ",
           };
         }
 

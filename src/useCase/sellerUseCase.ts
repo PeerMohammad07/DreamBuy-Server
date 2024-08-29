@@ -1,3 +1,4 @@
+import { avatarImage } from "../infrastructure/utils/avatarImae";
 import {
   createImageUrl,
   sendObjectToS3,
@@ -55,8 +56,8 @@ export default class SellerUseCase implements ISellerUsecase {
       }
       const bycryptPassword = await this.hashingService.hashing(data.password);
       data.password = bycryptPassword;
-      const id = Math.floor(Math.random() * (800 - 1 + 1)) + 1;
-      data.image = `https://avatar.iran.liara.run/public/boy?id=${id}`
+      const randNumber = Math.floor(Math.random() * (50 - 1 + 1)) + 1;
+      data.image = avatarImage(randNumber)
       await this.sellerRepository.createSeller(data);
 
       const otp = await this.otpService.generateOtp();
