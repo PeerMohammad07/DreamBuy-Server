@@ -23,7 +23,7 @@ export interface PropertyData {
   city: string;
   bedrooms: number;
   bathrooms: number;
-  expectedPrice: number;
+  price: number;
   features: string[];
   description: string;
   images: { base64String: string; fileName: string; fileType: string }[];
@@ -62,7 +62,7 @@ export interface Property {
   city: string;
   bedrooms: number;
   bathrooms: number;
-  expectedPrice: number;
+  price: number;
   features: string[];
   description: string;
   images: string[];
@@ -75,6 +75,7 @@ export interface Property {
 };
 
 
+// Interface for Seller User Case
 export default interface ISellerUsecase {
   register(data: IregisterData): Promise<void | returnMessage>
   verifyOtp(email: string, otp: string): Promise<returnMessage>

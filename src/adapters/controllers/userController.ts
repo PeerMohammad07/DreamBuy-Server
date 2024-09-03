@@ -252,18 +252,18 @@ export default class userController implements IUserController {
     req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>,
     res: Response<any, Record<string, any>>
   ) {
-    try {
+    try { 
       const { email } = req.body;
       const response = await this.userUseCase.validateForgotPassword(email);
       if (response == "Email sended to the user") {
-        res.status(200).json({ message: "email sended succesfully" });
+        res.status(200).json({ message: "email send succesfully" });
         return;
-      } else if (response == "seller not exist with this email") {
+      } else if (response == "user not exist with this email") {
         res
           .status(403)
-          .json({ message: "seller doesnt exist with this email" });
+          .json({ message: "User not exist with this email" });
         return;
-      }
+      } 
     } catch (error) {
       console.log(error);
     }

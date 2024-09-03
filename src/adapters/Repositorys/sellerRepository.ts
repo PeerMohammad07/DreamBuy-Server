@@ -161,7 +161,7 @@ export default class SellerRepository implements ISellerRepository {
         noOfBathroom: data.bathrooms,
         description: data.description,
         location: data.location,
-        Price: data.expectedPrice,
+        price: data.price,
         propertyImage: data.images,
         sqft:data.sqft,
         locationCoordinates: {

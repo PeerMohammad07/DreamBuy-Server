@@ -8,6 +8,8 @@ export interface IregisterBody {
   password?: string;
 }
 
+
+// Interface for user controller
 export interface IUserController {
   login(
     req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>,

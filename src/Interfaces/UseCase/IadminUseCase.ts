@@ -35,6 +35,8 @@ interface GetMonthlyRevenueResponse {
 }
 
 
+
+// Interface for admin use case
 export interface IadminUseCase {
   login(email:string,password:string):Promise<returnData|void>
   getUsers():void

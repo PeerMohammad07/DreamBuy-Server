@@ -18,6 +18,7 @@ export default class adminUseCase implements IadminUseCase {
     this.jwtService = jwtService;
   }
 
+  // Admin Login
   async login(email: string, password: string): Promise<returnData | void> {
     try {
       const admin = await this.adminRepository.checkEmailExists(email);
@@ -48,6 +49,7 @@ export default class adminUseCase implements IadminUseCase {
     }
   }
 
+  // Get all users
   async getUsers() {
     try {
       const users = await this.adminRepository.getAllUsers();
@@ -57,6 +59,7 @@ export default class adminUseCase implements IadminUseCase {
     }
   }
 
+  // Block user
   async blockUser(id: string, status: boolean) {
     try {
       const response = await this.adminRepository.blockOrUnBlockUser(id, status);
@@ -71,6 +74,7 @@ export default class adminUseCase implements IadminUseCase {
     }
   }
 
+  // Get all Sellers
   async getSeller() {
     try {
       return await this.adminRepository.getSeller();
@@ -80,6 +84,7 @@ export default class adminUseCase implements IadminUseCase {
     }
   }
 
+  // Get all Categorys
   async getCategory() {
     try {
       return await this.adminRepository.getCategory();
@@ -89,6 +94,7 @@ export default class adminUseCase implements IadminUseCase {
     }
   }
 
+  // Block Category
   async blockCategory(id: string, status: boolean) {
     try {
       const response = await this.adminRepository.blockOrUnBlockCategory(id, status);
@@ -103,6 +109,7 @@ export default class adminUseCase implements IadminUseCase {
     }
   }
 
+  // Add category
   async addCategory(name: string, description: string) {
     try {
       return await this.adminRepository.addCategory(name, description);
@@ -111,6 +118,7 @@ export default class adminUseCase implements IadminUseCase {
     }
   }
 
+  // Edit Category
   async editCategory(id: string, name: string, description: string) {
     try {
       return await this.adminRepository.editCategory(id, name, description);
@@ -120,6 +128,7 @@ export default class adminUseCase implements IadminUseCase {
     }
   }
 
+  // Block Property
   async blockProperty(id: string, status: boolean) {
     try {
       const response = await this.adminRepository.blockProperty(id, status);
@@ -134,6 +143,7 @@ export default class adminUseCase implements IadminUseCase {
     }
   }
 
+  // Get all amenities
   async getAmenities() {
     try {
       return await this.adminRepository.getAllAmenities();
@@ -143,6 +153,7 @@ export default class adminUseCase implements IadminUseCase {
     }
   }
 
+  // Add amenity
   async addAmenity(name: string) {
     try {
       return await this.adminRepository.addAmenity(name);
@@ -151,6 +162,7 @@ export default class adminUseCase implements IadminUseCase {
     }
   }
 
+  // Edit Amenity
   async editAmenity(id: string, name: string) {
     try {
       return await this.adminRepository.editAmenity(id, name);
@@ -160,6 +172,7 @@ export default class adminUseCase implements IadminUseCase {
     }
   }
 
+  // Block amenity
   async blockAmenity(id: string, status: boolean) {
     try {
       const response = await this.adminRepository.blockAmenity(id, status);
@@ -174,6 +187,7 @@ export default class adminUseCase implements IadminUseCase {
     }
   }
 
+  // Get all dashboard data
   async getAllDashboardDatas() {
     try {
       const [noOfUsers, noOfSellers, noOfCategories, noOfAmenities, noOfRentProperties, noOfSaleProperties,mostUsedAmenities,mostUsedCategorys,noOfPremiumUsers,totalRevenue] = await Promise.all([
@@ -206,6 +220,7 @@ export default class adminUseCase implements IadminUseCase {
     }
   }
   
+  // Get monthly revenue
   async getMonthlyRevenue(){
     try {
       const [userGrowth,sellerGrowth,monthlyRevenue] = await Promise.all([

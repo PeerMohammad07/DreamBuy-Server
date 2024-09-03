@@ -5,6 +5,8 @@ import { IOtp } from "../../entity/allEntity";
 import { Property, PropertyData, returnMessage } from "../UseCase/IsellerUseCase";
 import { IRevenueData } from "./userRepository";
 
+
+// Interface for seller repository
 export default interface ISellerRepository {
   checkEmailExists(email:string):Promise<ISeller|null>
   checkUserExists(id:string):Promise<ISeller|null>

@@ -11,6 +11,7 @@ interface FileObject {
   mimetype: string;
 }
 
+// Interface for chat user case
 export default interface IchatUseCase {
   getConversations(id:string) : Promise<IConversation[]>
   sendMessage(senderId:string,message:string,recieverId:string):Promise<IMessage>

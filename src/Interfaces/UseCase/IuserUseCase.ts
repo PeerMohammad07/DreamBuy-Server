@@ -50,6 +50,8 @@ interface returnMessage {
   data ?: IProperty|null|IWhishlist
 }
 
+
+// Interface for User user case
 export default interface IuserUseCase{
   register(data:IregisterBody):Promise<void|loginRes>
   verifyOtp(email:string,otp:string):Promise<Itoken>

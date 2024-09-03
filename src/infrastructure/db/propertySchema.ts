@@ -72,8 +72,8 @@ const propertySchema = new Schema({
       required: true,
     },
   },
-  Price: {
-    type: String, 
+  price: {
+    type: Number, 
     required: true,
   },
   propertyImage: {

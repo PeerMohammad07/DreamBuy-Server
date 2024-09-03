@@ -1,5 +1,6 @@
 import { IConversation, IMessage } from "../../entity/allEntity";
 
+// Interface for chat repository 
 export default interface IChatRepository {
   getConversations(id:string):Promise<IConversation[]>
   getSingleConversation(senderId:string,receiverId:string):Promise<IConversation|null>

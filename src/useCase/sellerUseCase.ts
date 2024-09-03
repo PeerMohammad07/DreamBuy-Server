@@ -7,7 +7,6 @@ import {
   randomImageName,
   sharpImage,
 } from "../infrastructure/utils/sharpImage";
-import { IPushNotificationRepository } from "../Interfaces/Repository/pushNotificatio";
 import ISellerRepository from "../Interfaces/Repository/sellerRepository";
 import ISellerUsecase, {
   IupdatePropertyData,
@@ -51,7 +50,7 @@ export default class SellerUseCase implements ISellerUsecase {
       if (exist) {
         return {
           status: false,
-          message: "this seller already exist",
+          message: "Seller already exist with this email",
         };
       }
       const bycryptPassword = await this.hashingService.hashing(data.password);
@@ -119,7 +118,7 @@ export default class SellerUseCase implements ISellerUsecase {
         if (seller.isBlocked) {
           return {
             status: false,
-            message: "this user is blocked ",
+            message: "This user is blocked ",
           };
         }
 
@@ -150,6 +149,7 @@ export default class SellerUseCase implements ISellerUsecase {
     }
   }
 
+  // resend otp
   async resendOtp(email: string) {
     try {
       const user = await this.sellerRepository.checkEmailExists(email);
@@ -190,6 +190,7 @@ export default class SellerUseCase implements ISellerUsecase {
     }
   }
 
+  // reset password
   async resetPassword(password: string, id: string, token: string) {
     try {
       const user = await this.sellerRepository.checkUserExists(id);
@@ -214,6 +215,7 @@ export default class SellerUseCase implements ISellerUsecase {
     }
   }
 
+  // update kyc image
   async updateKycImage(type: string, buffer: string, id: string) {
     try {
       const sharpedImage = await sharpImage(2000,2000,buffer);
@@ -237,6 +239,7 @@ export default class SellerUseCase implements ISellerUsecase {
     }
   }
 
+  // kyc status update
   async kycStatusUpdate(id: string, status: string) {
     try {
       const response = await this.sellerRepository.kycStatusUpdate(id, status);
@@ -247,6 +250,8 @@ export default class SellerUseCase implements ISellerUsecase {
     }
   }
 
+
+  // block seller 
   async blockSeller(id: string, status: boolean) {
     try {
       const response = await this.sellerRepository.blockSeller(id, status);
@@ -261,6 +266,7 @@ export default class SellerUseCase implements ISellerUsecase {
     }
   }
 
+  // Add Property
   async addProperty(id: string, data: PropertyData) {
     try {      
       const seller = await this.sellerRepository.checkUserExists(id);
@@ -301,6 +307,7 @@ export default class SellerUseCase implements ISellerUsecase {
     }
   }
 
+  // Change Password
   async changePassword(oldPassword: string, newPassword: string, sellerId: string) {
     try {
       const response = await this.sellerRepository.checkUserExists(sellerId)
@@ -322,7 +329,7 @@ export default class SellerUseCase implements ISellerUsecase {
     }
   }
 
-
+  // Update Seller
   async updateSeller(name: string, phone: string, sellerId: string){
     try {
       const response = await this.sellerRepository.updateSeller(sellerId,name,phone)
@@ -336,6 +343,7 @@ export default class SellerUseCase implements ISellerUsecase {
     }
   }
 
+  // Get My Property
   async getMyProperty(id:string){
     try {
       return this.sellerRepository.getMyProperty(id)
@@ -345,11 +353,12 @@ export default class SellerUseCase implements ISellerUsecase {
     }
   }
 
+  // Delete Property
   async deleteProperty(id:string){
     try {
       const response = await this.sellerRepository.deletePropety(id)
       if(response){
-        return {message:"proeprty deleted successfully",status:true}
+        return {message:"proeprty deleted successfully",status:true,data:response}
       }
         return {message:"proeprty deleted failed",status:false}
     } catch (error) {
@@ -358,6 +367,7 @@ export default class SellerUseCase implements ISellerUsecase {
     }
   }
 
+  // Update Property
   async updateProeprty(data: any) {
     try {
       if (!data || !data.sellerId ) {
@@ -392,10 +402,8 @@ export default class SellerUseCase implements ISellerUsecase {
         const validImageUrls = imageUrls.filter((url): url is string => url !== null);
         propertyData = { ...data, propertyImage: validImageUrls };
       }
-      console.log(propertyData,"reached herre")
   
       const response = await this.sellerRepository.updateProperty(propertyData);
-      console.log("Updated Property:", response); 
   
       if (response) {
         return { status: true, message: "Successfully updated the property", data: response };
@@ -409,6 +417,7 @@ export default class SellerUseCase implements ISellerUsecase {
   }
   
 
+  // Get Bosst Property
   async getBoostProperty(planId:string,duration:string,propertyId:string){
     try {
       const property = await this.sellerRepository.getProperty(propertyId)
@@ -436,6 +445,7 @@ export default class SellerUseCase implements ISellerUsecase {
     }
   }
 
+  // Boost Property
   async boostProperty(propertyId: string, type: string) {
     try {
       const startDate = new Date();

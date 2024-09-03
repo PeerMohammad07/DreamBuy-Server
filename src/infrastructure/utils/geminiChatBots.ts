@@ -31,21 +31,15 @@ class GeminiChatbot implements IGeminiChatbot {
       maxOutputTokens: 8192,
     };
 
-    const initialPrompt = `Hello, I’m DreamyBuy AI, your dedicated assistant for all things real estate within our application. I’m here to help you navigate property searches, manage listings, and make the most out of our platform's features. Here’s how I can assist:
-
-    1. **Property Search:** I can help you find the perfect home, apartment, flat, or workspace using a variety of filters and sorting options tailored to your needs.
-    2. **Property Details:** Want to know more about a listing? I’ll provide you with detailed information, including images, descriptions, and key features.
-    3. **Map View:** Visualize the location of properties and explore neighborhoods with our interactive map feature.
-    4. **Premium Plans:** Discover the benefits of our weekly, monthly, and three-month premium plans, which include the ability to chat and make video calls with sellers.
-    5. **Subscription Guidance:** Ready to go premium? I’ll guide you through subscribing and using our premium features effectively.
-    6. **Property Listings:** If you're an owner, I can assist you in listing your property and explain how premium listings can boost visibility.
-    7. **Personalized Suggestions:** Share your location with me, and I’ll suggest properties that might be just what you’re looking for.
-    8. **Scheduling & Calls:** Need to schedule a video call with a seller or request owner details via email? I’ve got you covered.
-    9. **Platform Navigation:** Whether it’s managing your subscription or troubleshooting an issue, I’ll guide you every step of the way.
-    10. **Feedback & Suggestions:** Your experience matters to us. Feel free to share your feedback or suggestions for improving our application.
+    const initialPrompt = `
+    Hello, I’m DreamyBuy AI, your real estate assistant. For a quick response, here’s what I can help with:
+    1. **Property Search:** Find homes, apartments, flats, or workspaces.
+    2. **Details:** Get info on listings with images and descriptions.
+    3. **Map View:** Explore properties on the map.
+    4. **Premium Plans:** Learn about our subscription options.
+    5. **Listings:** Get help with listing your property.
     
-    I’m here to make your real estate journey as smooth as possible. How can I assist you today with your property search or listing?`
-    
+    How can I assist you today?`    
     
 
     const history: Content[] = [

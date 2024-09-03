@@ -273,7 +273,7 @@ export default class SellerController implements ISellerController {
         city,
         bedrooms,
         bathrooms,
-        expectedPrice,
+        price:Number(expectedPrice),
         features,
         description,
         images,
@@ -281,7 +281,6 @@ export default class SellerController implements ISellerController {
         sellerId,
         sqft
       };
-      console.log(features);
       
       const response = await this.sellerUseCase.addProperty(sellerId, data);
       res.status(200).json(response);
@@ -343,7 +342,6 @@ export default class SellerController implements ISellerController {
     res: Response<any, Record<string, any>>){
       try {
         const {data} = req.body
-        console.log(data,"data n seller controeleer pdate proertu")
         const response = await this.sellerUseCase.updateProeprty(data)
         res.status(200).json(response)
       } catch (error) {

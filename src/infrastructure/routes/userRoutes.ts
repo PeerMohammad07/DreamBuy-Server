@@ -49,6 +49,9 @@ userRouter.post("/forgotPassword", UserController.forgotPassword);
 userRouter.post("/resetPassword", UserController.resetPassword);
 userRouter.post('/productDetail',UserController.productDetail)
 
+userRouter.get('/status', (req, res) => {
+  res.status(200).json({ message: 'Server is running successfully!' });
+});
 userRouter.get('/getUser',UserController.getUser)
 
 userRouter.get('/whishlist/:userId',UserController.getAllWhishlistProperty)

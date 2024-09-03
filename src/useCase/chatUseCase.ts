@@ -1,5 +1,4 @@
 import IChatRepository from "../Interfaces/Repository/chatRepository";
-import { IPushNotificationRepository } from "../Interfaces/Repository/pushNotificatio";
 import IchatUseCase from "../Interfaces/UseCase/IchatUsecase";
 import IImageAndVideoUpload from "../Interfaces/Utils/ImageAndVideoUpload";
 
@@ -17,6 +16,7 @@ export default class chatUseCase implements IchatUseCase {
     this.imageAndVideoUpload = imageAndVideoUpload
   }
 
+  // Get conversations
   async getConversations(id: string) {
     try {
       return await this.chatRepository.getConversations(id)
@@ -26,6 +26,7 @@ export default class chatUseCase implements IchatUseCase {
     }
   }
 
+  // Send Message
   async sendMessage(senderId: string, message: string, recieverId: string) {
     try {
       let conversation = await this.chatRepository.getSingleConversation(senderId, recieverId)
@@ -39,6 +40,7 @@ export default class chatUseCase implements IchatUseCase {
     }
   }
 
+  // File upload in chat
   async uploadChatFile(senderId: string, files: FileObject[], recieverId: string) {
     try {
       let conversation = await this.chatRepository.getSingleConversation(senderId, recieverId)
@@ -102,6 +104,7 @@ export default class chatUseCase implements IchatUseCase {
     }
 
 
+  // Creating Conversation btw user and seller
   async createConversation(senderId: string, recieverId: string){
       try {
         const alreadyConversation = await this.chatRepository.getSingleConversation(senderId, recieverId)
@@ -116,6 +119,7 @@ export default class chatUseCase implements IchatUseCase {
       }
     }
 
+    // Get all messages 
   async getMessages(senderId: string, receiverId: string){
       try {
         const conversation = await this.chatRepository.getSingleConversation(senderId, receiverId)

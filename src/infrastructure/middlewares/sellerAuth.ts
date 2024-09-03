@@ -20,7 +20,7 @@ const sellerAuth = async (req: IAuthRequest, res: Response, next: NextFunction) 
   let sellerToken = req.cookies.sellerToken;
   
   if (!refreshToken) {
-    res.status(401)
+    return res.status(401)
       .json({ message: "Not authorized, no refresh token" });
   }
 

@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { ParamsDictionary } from "express-serve-static-core";
 import { ParsedQs } from "qs";
 
+// Interface for Seller Controller
 export interface ISellerController {
   login(
     req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>,

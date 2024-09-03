@@ -12,7 +12,6 @@ import { randomImageName, sharpImage } from "../infrastructure/utils/sharpImage"
 import { createImageUrl, sendObjectToS3 } from "../infrastructure/utils/s3Bucket";
 import sendEmailOwnerDetails from "../infrastructure/utils/sendSellerDetails";
 import { IProperty } from "../entity/allEntity";
-import { IPushNotificationRepository } from "../Interfaces/Repository/pushNotificatio";
 
 
 interface SearchParams {
@@ -227,6 +226,13 @@ export default class userUseCase implements IuserUseCase {
     if (!user) {
       return { status: false, message: "please register to login" };
     }
+
+    if(user.isBlocked){
+      return {
+        status: false,
+        message: "This user is blocked ",
+      };
+    }
     const loginUser = await this.userRepository.checkEmailExists(data.email);
 
     let payload = {
@@ -244,8 +250,6 @@ export default class userUseCase implements IuserUseCase {
   async validateForgotPassword(email: string) {
     try {
       const user = await this.userRepository.checkEmailExists(email);
-      console.log(email);
-
       if (!user) {
         return "user not exist with this email";
       }
@@ -265,6 +269,7 @@ export default class userUseCase implements IuserUseCase {
     }
   }
 
+  // reset password
   async resetPassword(password: string, id: string, token: string) {
     try {
       const user = await this.userRepository.checkUserExists(id);
@@ -287,6 +292,7 @@ export default class userUseCase implements IuserUseCase {
     } catch (error) { }
   }
 
+  // getUsers
   async getUsers(id: string, role: string) {
     try {
       if (role == 'user') {
@@ -300,6 +306,7 @@ export default class userUseCase implements IuserUseCase {
     }
   }
 
+  // Get Rent Property
   async getRentProperty() {
     try {
       const response = await this.userRepository.getRentProperty();
@@ -310,6 +317,7 @@ export default class userUseCase implements IuserUseCase {
     }
   }
 
+  // Get Sale property
   async getSaleProperty() {
     try {
       const response = await this.userRepository.getSaleProperty();
@@ -320,6 +328,7 @@ export default class userUseCase implements IuserUseCase {
     }
   }
 
+  // Update User
   async updateUser(id: string, name: string, image: string, type: string) {
     try {
       let url = image;
@@ -342,6 +351,7 @@ export default class userUseCase implements IuserUseCase {
     }
   }
 
+  // Get Premium
   async getPremium(data: any) {
     try {
       const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
@@ -364,7 +374,7 @@ export default class userUseCase implements IuserUseCase {
   }
 
 
-
+  // updatePremium
   async updatePremium(id: string, type: string) {
     try {
       let amount;
@@ -420,6 +430,7 @@ export default class userUseCase implements IuserUseCase {
     }
   }
 
+  // Productdetail
   async productDetail(id: string) {
     try {
       const response = await this.userRepository.productDetail(id)
@@ -437,6 +448,8 @@ export default class userUseCase implements IuserUseCase {
     }
   }
 
+
+  // sendOwnerDetail
   async sendOwnerDetail(sellerId: string, email: string, name: string, property: IProperty) {
     try {
       const seller = await this.userRepository.checkSellerExists(sellerId)
@@ -452,6 +465,7 @@ export default class userUseCase implements IuserUseCase {
   }
 
 
+  // add to wishlist
   async addToWhishlist(userId: string, propertyId: string) {
     try {
       const exist = await this.userRepository.whishlistPropertyExist(userId, propertyId)
@@ -469,6 +483,7 @@ export default class userUseCase implements IuserUseCase {
     }
   }
 
+  // remove whishlist
   async removeFromWhishlist(userId: string, propertyId: string) {
     try {
       const response = await this.userRepository.removeFromWhishlist(userId, propertyId)
@@ -482,6 +497,7 @@ export default class userUseCase implements IuserUseCase {
     }
   }
 
+  // get all wishlist property 
   async getAllWhishlistProperty(userId: string) {
     try {
       return await this.userRepository.getAllWhishlistProperty(userId)
@@ -491,6 +507,7 @@ export default class userUseCase implements IuserUseCase {
     }
   }
 
+  // get listing property
   async getListingProperty(search: SearchParams, filter: FilterParams, sort: SortOption, locationSearch: locationSearch) {
     try {
       const pipeline: any[] = [];
@@ -498,7 +515,6 @@ export default class userUseCase implements IuserUseCase {
 
       // Geo-Spatial Search
       if (locationSearch) {
-        console.log(locationSearch,"locationSearhc ")
         pipeline.push({
           $geoNear: {
             near: {
@@ -512,7 +528,6 @@ export default class userUseCase implements IuserUseCase {
         });
         sortStage['dist.calculated'] = 1; 
       } else if (search.latitude && search.longitude) {
-        console.log(search.latitude,search.longitude,"hehe ennada tih")
         pipeline.push({
           $geoNear: {
             near: {
@@ -520,24 +535,23 @@ export default class userUseCase implements IuserUseCase {
               coordinates: [search.longitude, search.latitude],
             },
             distanceField: "dist.calculated",
-            maxDistance: 10000 * 1000,  // 100000 km
+            maxDistance: 1000 * 1000,  // 100000 km
             spherical: true,
           },
         });
         sortStage['dist.calculated'] = 1;
-      }else{
-        // No need to do anything realted to location 
       }
 
 
       // Filtering
       const matchStage: any = { propertyStatus: false };
 
+
       if (filter) {
         if (filter.propertyFor) matchStage['propertyFor'] = filter.propertyFor;
         if (filter.bedrooms) matchStage['noOfBedroom'] = filter.bedrooms[0];
         if (filter.bathrooms) matchStage['noOfBathroom'] = filter.bathrooms[0];
-        if (filter.priceRange) matchStage['Price'] = { $gte: `${filter.priceRange[0]}`, $lte: `${filter.priceRange[1]}` };
+        if (filter.priceRange) matchStage['price'] = { $gte: filter.priceRange[0], $lte: filter.priceRange[1] };
         if (filter.category) matchStage['propertyType'] = filter.category;
         if (filter.sqft) matchStage['sqft'] = filter.sqft;
         if (filter.amenities && filter.amenities.length > 0) matchStage['features'] = { $in: filter.amenities };
@@ -549,10 +563,10 @@ export default class userUseCase implements IuserUseCase {
       if (sort) {
         switch (sort) {
           case 'priceAsc':
-            sortStage['Price'] = 1;
+            sortStage['price'] = 1;
             break;
           case 'priceDesc':
-            sortStage['Price'] = -1;
+            sortStage['price'] = -1;
             break;
           case 'dateDesc':
             sortStage['createdAt'] = -1;
@@ -564,9 +578,8 @@ export default class userUseCase implements IuserUseCase {
         pipeline.push({ $sort: sortStage });
       }
 
-      console.log(JSON.stringify(pipeline), "pipeline");
       const properties = await this.userRepository.getListinProperty(pipeline);
-      console.log(properties);
+      console.log(properties,"properties")
       return properties;
     } catch (error) {
       console.error('Error fetching properties:', error);

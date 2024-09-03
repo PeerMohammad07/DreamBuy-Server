@@ -1,5 +1,6 @@
 import IUser, { IAdmin, IAmenities, ICategory, IProperty, ISeller } from "../../entity/allEntity";
 
+// Interface for Admin Repository
 export default interface IadminRepository {
   checkEmailExists(email: string): Promise<IAdmin | null>;
   checkUserExists(id: string): Promise<IAdmin | null>;

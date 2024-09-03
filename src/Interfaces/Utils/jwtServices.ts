@@ -18,6 +18,8 @@ export interface DecodedJwt {
   exp?: number;
 }
 
+
+// Interface for Jwt service
 export default interface IjwtService {
   generateToken(data : tokenData):string
   verfiyToken(token:string):DecodedJwt|null

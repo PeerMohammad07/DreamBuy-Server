@@ -1,17 +1,27 @@
 import express, { Router } from "express";
-import SellerRepository from "../../adapters/Repositorys/sellerRepository";
 
+// schema imports
 import Seller from "../db/sellerSchema";
 import OtpModel from "../db/otpSchema";
+import property from "../db/propertySchema";
+import RevenueModel from "../db/revenueSchema";
 
+// repository
+import SellerRepository from "../../adapters/Repositorys/sellerRepository";
+
+// use case
 import SellerUseCase from "../../useCase/sellerUseCase";
+
+// Controller
 import SellerController from "../../adapters/controllers/sellerController";
+
+// Services
 import HashingService from "../utils/hashingService";
 import OtpService from "../utils/otpService";
 import JwtToken from "../utils/jwtService";
-import property from "../db/propertySchema";
+
+// Authentication
 import sellerAuth from "../middlewares/sellerAuth";
-import RevenueModel from "../db/revenueSchema";
 
 const sellerRouter: Router = express.Router();
 

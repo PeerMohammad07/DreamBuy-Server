@@ -25,7 +25,7 @@ export interface IRevenueData {
   date: Date;
 }
 
-
+// Interface for user repository
 export default interface IuserRepository{
   checkEmailExists(email:string):Promise<IUser|null>
   checkUserExists(id:string):Promise<IUser|null>

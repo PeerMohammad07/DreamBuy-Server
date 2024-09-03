@@ -235,6 +235,7 @@ export default class userRepository implements IuserRepository {
 
   async getListinProperty(query: any) {
     try {
+      // aggregate(query)
       return await this.property.aggregate(query)
     } catch (error) {
       console.log(error)
