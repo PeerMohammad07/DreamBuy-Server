@@ -21,7 +21,7 @@ const adminAuth = async (req: IAuthRequest, res: Response, next: NextFunction) =
   let adminToken = req.cookies.adminToken;
   
   if (!refreshToken) {
-    res.status(401)
+    return res.status(401)
       .json({ message: "Not authorized, no refresh token" });
   }
 
